@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
+using PerfView.PerfViewData;
 using Utilities;
 
 #if !PERFVIEW_COLLECT

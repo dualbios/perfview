@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using PerfView.PerfViewData;
 using Utilities;
 using Address = System.UInt64;
 

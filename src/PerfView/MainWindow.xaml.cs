@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using PerfView.PerfViewData;
 using Utilities;
 
 /* Master TODO list */
