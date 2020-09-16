@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using PerfView.PerfViewData;
 using Address = System.UInt64;
 
 namespace PerfView

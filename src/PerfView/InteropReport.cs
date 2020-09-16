@@ -5,6 +5,7 @@ using Microsoft.Diagnostics.Tracing.Etlx;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using PerfView.PerfViewData;
 using Address = System.UInt64;
 
 namespace PerfView

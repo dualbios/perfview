@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using PerfView.PerfViewData;
 
 namespace PerfView
 {
