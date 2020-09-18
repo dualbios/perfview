@@ -2664,7 +2664,7 @@ namespace PerfView.PerfViewData
                 m_traceLog.CodeAddresses.LookupSymbolsForModule(symReader, moduleFile);
             }
         }
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             var tracelog = GetTraceLog(worker.LogWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
             {

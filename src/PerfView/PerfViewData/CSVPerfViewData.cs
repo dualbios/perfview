@@ -17,7 +17,7 @@ namespace PerfView.PerfViewData
         public override string FormatName { get { return "XPERF CSV"; } }
         public override string[] FileExtensions { get { return new string[] { ".csvz", ".etl.csv" }; } }
 
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             m_csvReader = new CSVReader.CSVReader(FilePath);
             m_Children = new List<PerfViewTreeItem>();

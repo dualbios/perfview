@@ -62,7 +62,7 @@ namespace PerfView.PerfViewData
             }
         }
 
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             worker.Log("Opening diagnostics session file " + Path.GetFileName(FilePath));
 

@@ -46,6 +46,7 @@
         <KeyBinding Gesture="CTRL+L" Command="{x:Static src:MainWindow.FocusDirectoryCommand}" />
     </Window.InputBindings>
     <DockPanel>
+        
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -139,7 +140,7 @@
             <Button Name="FeedbackButton" Grid.Column="8" Margin="5,1,10,1" Content="Feedback" FontSize="9"
                     ToolTip="Send feedback to the maintainers of PerfView." Click="DoFeedbackClick"/>
         </Grid>
-        <src:StatusBar x:Name="StatusBar" DockPanel.Dock="Bottom"/>
+        <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="220*"/>
@@ -313,6 +314,8 @@
                     </FlowDocument>
                 </RichTextBox.Document>
             </RichTextBox>
+        </Grid>
+            <src:StatusBar x:Name="StatusBar" Visibility="Collapsed"/>
         </Grid>
     </DockPanel>
 </Window>

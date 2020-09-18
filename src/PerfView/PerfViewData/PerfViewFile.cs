@@ -431,7 +431,7 @@ namespace PerfView.PerfViewData
         /// then  action(doAfter) continuation is returned.  This function is given an addition action 
         /// that must be done at the every end.   
         /// </summary>
-        protected virtual Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public virtual Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             return delegate (Action doAfter)
             {

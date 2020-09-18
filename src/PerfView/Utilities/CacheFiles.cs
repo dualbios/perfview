@@ -10,7 +10,7 @@ namespace Utilities
     /// Some applications need to make files that are associated with the application
     /// but also have affinity with other files on the disk.   This class helps manage this
     /// </summary>
-    internal static class CacheFiles
+    public static class CacheFiles
     {
         public static float KeepTimeInDays { get; set; }
         public static string CacheDir

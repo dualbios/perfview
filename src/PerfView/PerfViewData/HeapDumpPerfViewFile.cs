@@ -83,7 +83,7 @@ namespace PerfView.PerfViewData
             return ret;
         }
 
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             if (AppLog.InternalUser)
             {

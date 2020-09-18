@@ -70,7 +70,7 @@ namespace PerfView.PerfViewData
             return null;
         }
 
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             // Open the file.
             m_traceLog = GetTraceLog(worker.LogWriter);

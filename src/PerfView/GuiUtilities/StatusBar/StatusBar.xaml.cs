@@ -191,6 +191,9 @@ namespace PerfView
                 LogError("Must first cancel: " + m_workMessage + " before starting " + message);
                 return;
             }
+
+            this.Visibility = Visibility.Visible;
+
             // PerfViewLogger.Log.DebugMessage("Starting Working " + message);
             m_abortStarted = false;
             m_abortDidInterrupt = false;
@@ -301,6 +304,8 @@ namespace PerfView
                 {
                     Thread.CurrentThread.CurrentCulture = oldCulture.Item1;
                     Thread.CurrentThread.CurrentUICulture = oldCulture.Item2;
+
+                    this.Dispatcher.Invoke(()=> this.Visibility = Visibility.Collapsed);
                 }
             });
 

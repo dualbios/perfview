@@ -6,8 +6,9 @@
              xmlns:perfview="clr-namespace:PerfView"
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="500">
-
-    <Grid>
+<Grid Background="#7F7E7E7E">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
+          Width="450" Height="24">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
@@ -15,7 +16,7 @@
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <TextBox Grid.Column="0" Name="m_StatusMessage" ContextMenu="{x:Null}" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
-            <TextBox.Triggers>
+            <!--<TextBox.Triggers>
                 <EventTrigger RoutedEvent="perfview:StatusBar.HighlightMessage">
                     <EventTrigger.Actions>
                         <BeginStoryboard>
@@ -36,10 +37,11 @@
                         </BeginStoryboard>
                     </EventTrigger.Actions>
                 </EventTrigger>
-            </TextBox.Triggers>
+            </TextBox.Triggers>-->
         </TextBox>
         <TextBlock Grid.Column="1" Name ="m_ProgressText" Width="85" Text="Ready" Margin="5,0,0,0" TextAlignment="Left" VerticalAlignment="Center"></TextBlock>
         <Button Grid.Column="2" Name ="m_LogButton" IsEnabled="true" Margin="5,2" ToolTip="Open the diagnostic log" Click="Log_Click">Log</Button>
         <Button Grid.Column="3" Name ="m_CancelButton" IsEnabled="false" Margin="5,2" ToolTip="Cancel the operation in flight (ESC)" Click="Cancel_Click">Cancel</Button>
     </Grid>
+</Grid>
 </UserControl>

@@ -1532,7 +1532,7 @@ namespace PerfView
             LogFile.WriteLine("[Unpacked ETL file {0}", parsedArgs.DataFile);
         }
 
-        internal static void UnZipIfNecessary(ref string inputFileName, TextWriter log, bool unpackInCache = true, bool wprConventions = false)
+        public static void UnZipIfNecessary(ref string inputFileName, TextWriter log, bool unpackInCache = true, bool wprConventions = false)
         {
             if (inputFileName.EndsWith(".trace.zip", StringComparison.OrdinalIgnoreCase))
             {

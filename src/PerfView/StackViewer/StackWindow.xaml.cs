@@ -1260,7 +1260,7 @@ namespace PerfView
             }
 
             StatusBar.Status = "Opening object view on  " + nodeCount + " objects.";
-            var objectViewer = new ObjectViewer(this, asMemoryStackSource.Graph, asMemoryStackSource.RefGraph, nodeIdxs);
+            var objectViewer = new PerfView.ObjectViewer(this, asMemoryStackSource.Graph, asMemoryStackSource.RefGraph, nodeIdxs);
             objectViewer.Show();
         }
 

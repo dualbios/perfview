@@ -20,7 +20,7 @@ namespace Microsoft.Diagnostics.Utilities
 #if UTILITIES_PUBLIC
     public 
 #endif
-    static class FileUtilities
+public    static class FileUtilities
     {
         /// <summary>
         /// GetLines works much like File.ReadAllLines, however instead of returning a

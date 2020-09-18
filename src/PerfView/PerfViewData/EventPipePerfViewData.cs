@@ -29,7 +29,7 @@ namespace PerfView.PerfViewData
             return new ETWEventSource(traceLog);
         }
 
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
         {
             // Open the file.
             m_traceLog = GetTraceLog(worker.LogWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)

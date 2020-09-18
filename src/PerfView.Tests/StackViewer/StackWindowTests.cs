@@ -343,7 +343,7 @@ namespace PerfViewTests.StackViewer
 
             public override string[] FileExtensions => new[] { "Time Range Test" };
 
-            protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
+            public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker)
             {
                 return doAfter =>
                 {

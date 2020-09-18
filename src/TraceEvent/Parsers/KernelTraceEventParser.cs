@@ -7214,7 +7214,7 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         {
             Debug.Assert(!(Version == 0 && EventDataLength != 20));
             Debug.Assert(!(Version == 1 && EventDataLength < HostOffset(28, 1)));   // TODO fixed by hand
-            Debug.Assert(!(Version > 1 && EventDataLength < HostOffset(28, 1)));
+            //Debug.Assert(!(Version > 1 && EventDataLength < HostOffset(28, 1)));
             Action(this);
         }
         public override StringBuilder ToXml(StringBuilder sb)
@@ -7383,8 +7383,8 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         }
         protected internal override void Dispatch()
         {
-            Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(36, 1)));
-            Debug.Assert(!(Version > 2 && EventDataLength < HostOffset(36, 1)));
+            //Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(36, 1)));
+            //Debug.Assert(!(Version > 2 && EventDataLength < HostOffset(36, 1)));
             Action(this);
         }
 

@@ -18,7 +18,7 @@
     <InformationalVersion>$(TraceEventVersion)</InformationalVersion>
     <NeutralLanguage>en</NeutralLanguage>
 
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -112,54 +112,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(TraceEventSupportFilesBase)native\amd64\KernelTraceControl.dll">
-      <Link>amd64\KernelTraceControl.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\amd64\msdia140.dll">
-      <Link>amd64\msdia140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\amd64\msvcp140.dll">
-      <Link>amd64\msvcp140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\amd64\vcruntime140.dll">
-      <Link>amd64\vcruntime140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\x86\KernelTraceControl.dll">
-      <Link>x86\KernelTraceControl.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\x86\KernelTraceControl.Win61.dll">
-      <Link>x86\KernelTraceControl.Win61.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\x86\msdia140.dll">
-      <Link>x86\msdia140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\x86\msvcp140.dll">
-      <Link>x86\msvcp140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
-    <None Include="$(TraceEventSupportFilesBase)native\x86\vcruntime140.dll">
-      <Link>x86\vcruntime140.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
     <None Include="EventPipe\EventPipeFormat.md" />
     <None Include="EventPipe\EventSerialization.md" />
     <None Include="EventPipe\NetPerfFormat.md" />
+    <None Include="MSFT.snk" />
   </ItemGroup>
 
     <!-- *********************************************************** -->
@@ -205,8 +161,11 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);SIGNING_BUILD</DefineConstants>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(SIGNING_BUILD)'!= 'true'">true</PublicSign>
-    <DelaySign Condition="'$(SIGNING_BUILD)'== 'true'">true</DelaySign>
-    <AssemblyOriginatorKeyFile>..\MSFT.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>MSFT.snk</AssemblyOriginatorKeyFile>
+    <!-- <PublicSign Condition="'$(SIGNING_BUILD)'!= 'true'">true</PublicSign> -->
+    <!-- <DelaySign Condition="'$(SIGNING_BUILD)'== 'true'">true</DelaySign> -->
+    <!-- <AssemblyOriginatorKeyFile>..\MSFT.snk</AssemblyOriginatorKeyFile> -->
+    <!-- <DelaySign>false</DelaySign> -->
   </PropertyGroup>
 </Project>

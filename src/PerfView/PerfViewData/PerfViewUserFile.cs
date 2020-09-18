@@ -13,7 +13,7 @@ namespace PerfView.PerfViewData
 
         public override string FormatName { get { return m_formatName; } }
         public override string[] FileExtensions { get { return m_fileExtensions; } }
-        protected override Action<Action> OpenImpl(Window parentWindow, StatusBar worker) { return null; }
+        public override Action<Action> OpenImpl(Window parentWindow, StatusBar worker) { return null; }
 
         #region private
         private string m_formatName;
