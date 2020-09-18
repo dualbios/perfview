@@ -14,33 +14,47 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Grid Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="4"></Setter>
-                        <Setter Property="Width" Value="120"></Setter>
-                        <Setter Property="Height" Value="80"></Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <Button Content="Open ..." Command="{Binding OpenCommand}"></Button>
-                <Button Content="Collect ..."></Button>
+        <Grid>
+            <Grid Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Margin" Value="4"></Setter>
+                                <Setter Property="Width" Value="120"></Setter>
+                                <Setter Property="Height" Value="80"></Setter>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Content="Open ..." Command="{Binding OpenCommand}"></Button>
+                        <Button Content="Collect ..."></Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <DockPanel LastChildFill="True" Visibility="{Binding IsFileOpened, Converter={StaticResource BooleanToVisibilityConverter} }">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Margin" Value="4"></Setter>
+                            <Setter Property="Width" Value="60"></Setter>
+                            <Setter Property="Height" Value="30"></Setter>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="Collect"></Button>
+                    <Button Content="Run"></Button>
+                </StackPanel>
+                <!--<TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>-->
+                <ListBox ItemsSource="{Binding FileParts}" DisplayMemberPath="Name">
+                </ListBox>
+                <ContentControl Content="{Binding MainObject}"></ContentControl>
+            </DockPanel>
+        </Grid>
+
+        <Grid Background="DimGray"
+            Visibility="{Binding IsFileOpening, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200 0">
+                <ProgressBar IsIndeterminate="True"  Height="16" VerticalAlignment="Center" ></ProgressBar>
+                <TextBlock Text="Loading ..." HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
-        <DockPanel LastChildFill="True" Visibility="{Binding IsFileOpened, Converter={StaticResource BooleanToVisibilityConverter} }">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="4"></Setter>
-                        <Setter Property="Width" Value="60"></Setter>
-                        <Setter Property="Height" Value="30"></Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <Button Content="Collect"></Button>
-                <Button Content="Run"></Button>
-            </StackPanel>
-            <TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>
-            <ContentControl Content="{Binding MainObject}"></ContentControl>
-        </DockPanel>
     </Grid>
 </Window>

@@ -160,7 +160,7 @@
   <!-- .NET Strong Name Signing -->
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);SIGNING_BUILD</DefineConstants>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>MSFT.snk</AssemblyOriginatorKeyFile>
     <!-- <PublicSign Condition="'$(SIGNING_BUILD)'!= 'true'">true</PublicSign> -->

@@ -7491,7 +7491,7 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         }
         protected internal override void Dispatch()
         {
-            Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(44, 1)));
+            //Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(44, 1)));
             Debug.Assert(!(Version > 2 && EventDataLength < HostOffset(44, 1)));
             Action(this);
         }
@@ -7604,7 +7604,7 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         }
         protected internal override void Dispatch()
         {
-            Debug.Assert(!(Version >= 1 && EventDataLength < HostOffset(52, 1)));
+            //Debug.Assert(!(Version >= 1 && EventDataLength < HostOffset(52, 1)));
             Action(this);
         }
         public override StringBuilder ToXml(StringBuilder sb)
@@ -7694,7 +7694,7 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         }
         protected internal override void Dispatch()
         {
-            Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(60, 1)));
+            //Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(60, 1)));
             Debug.Assert(!(Version > 2 && EventDataLength < HostOffset(60, 1)));
             Action(this);
         }
@@ -8074,7 +8074,7 @@ namespace Microsoft.Diagnostics.Tracing.Parsers.Kernel
         }
         protected internal override void Dispatch()
         {
-            Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(52, 1)));
+            //Debug.Assert(!(Version == 2 && EventDataLength != HostOffset(52, 1)));
             Debug.Assert(!(Version > 2 && EventDataLength < HostOffset(52, 1)));
             Action(this);
         }

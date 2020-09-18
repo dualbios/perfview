@@ -17,10 +17,10 @@ namespace EventView.FileFormats.EtlPerf
             throw new System.NotImplementedException();
         }
 
-        public string Name { get; }
+        public string Name { get; } = "PerfViewTraceInfo";
         public Task Init(TraceLog traceLog)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

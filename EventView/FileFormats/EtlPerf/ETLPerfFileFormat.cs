@@ -17,13 +17,15 @@ namespace EventView.FileFormats.EtlPerf
         public string FormatName { get { return "ETW"; } }
         public string[] FileExtensions { get { return new string[] { ".btl", ".etl", ".etlx", ".etl.zip", ".vspx" }; } }
 
+        public IList<IFilePart> FileParts { get; private set; }
+
         private DateTime UtcLastWriteAtOpen
         {
             get;
             set;
         }
+
         private TraceLog m_traceLog;
-        private List<IEtlFilePart> m_Children;
 
         public ETLPerfFileFormat(IEtlPerfPartFactory etlPerfPartFactory)
         {
@@ -36,14 +38,16 @@ namespace EventView.FileFormats.EtlPerf
             TextWriter logWriter = new StringWriter(stringBuilder);
             CommandLineArgs args = new CommandLineArgs();
 
-            var tracelog = GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
+            
+
+            var tracelog = await Task.Run(()=>GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
             {
                 //if (!m_notifiedAboutLostEvents)
                 //{
                 //    HandleLostEvents(parentWindow, truncated, numberOfLostEvents, eventCountAtTrucation, worker);
                 //    m_notifiedAboutLostEvents = true;
                 //}
-            });
+            }));
 
             // Warn about possible Win8 incompatibility.
             var logVer = tracelog.OSVersion.Major * 10 + tracelog.OSVersion.Minor;
@@ -55,15 +59,15 @@ namespace EventView.FileFormats.EtlPerf
                     //if (!m_notifiedAboutWin8)
                     //{
                     //    m_notifiedAboutWin8 = true;
-                        var versionMismatchWarning = "This trace was captured on Window 8 and is being read\r\n" +
-                                                     "on and earlier OS.  If you experience any problems please\r\n" +
-                                                     "read the trace on an Windows 8 OS.";
-                        logWriter.WriteLine(versionMismatchWarning);
-                        throw new Exception(versionMismatchWarning);
-                        //parentWindow.Dispatcher.BeginInvoke((Action)delegate ()
-                        //{
-                        //    MessageBox.Show(parentWindow, versionMismatchWarning, "Log File Version Mismatch", MessageBoxButton.OK);
-                        //});
+                    var versionMismatchWarning = "This trace was captured on Window 8 and is being read\r\n" +
+                                                 "on and earlier OS.  If you experience any problems please\r\n" +
+                                                 "read the trace on an Windows 8 OS.";
+                    logWriter.WriteLine(versionMismatchWarning);
+                    throw new Exception(versionMismatchWarning);
+                    //parentWindow.Dispatcher.BeginInvoke((Action)delegate ()
+                    //{
+                    //    MessageBox.Show(parentWindow, versionMismatchWarning, "Log File Version Mismatch", MessageBoxButton.OK);
+                    //});
                     //}
                 }
             }
@@ -72,7 +76,7 @@ namespace EventView.FileFormats.EtlPerf
             //var memory = new PerfViewTreeGroup("Memory Group");
             //var obsolete = new PerfViewTreeGroup("Old Group");
             //var experimental = new PerfViewTreeGroup("Experimental Group");
-            m_Children = new List<IEtlFilePart>();
+            FileParts = new List<IFilePart>();
 
             //bool hasCPUStacks = false;
             //bool hasDllStacks = false;
@@ -277,10 +281,11 @@ namespace EventView.FileFormats.EtlPerf
             //m_Children.Add(new PerfViewTraceInfo(this));
             //m_Children.Add(new PerfViewProcesses(this));
 
+            FileParts.Clear();
             foreach (IEtlFilePart etlFilePart in _etlPerfPartFactory.GetSupportedPart())
             {
                 await etlFilePart.Init(tracelog);
-                m_Children.Add(etlFilePart); 
+                FileParts.Add(etlFilePart);
             }
 
             //m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Processes / Files / Registry") { SkipSelectProcess = true });
@@ -524,7 +529,7 @@ namespace EventView.FileFormats.EtlPerf
             ////return Task.CompletedTask;
         }
 
-        public TraceLog GetTraceLog(string filePath, CommandLineArgs commandLineArgs,  TextWriter log, Action<bool, int, int> onLostEvents = null)
+        public TraceLog GetTraceLog(string filePath, CommandLineArgs commandLineArgs, TextWriter log, Action<bool, int, int> onLostEvents = null)
         {
             //if (m_traceLog != null)
             //{
@@ -553,9 +558,10 @@ namespace EventView.FileFormats.EtlPerf
             options.SkipMSec = commandLineArgs.SkipMSec;
             options.OnLostEvents = onLostEvents;
             options.LocalSymbolsOnly = false;
-            options.ShouldResolveSymbols = delegate (string moduleFilePath) { return false; };       // Don't resolve any symbols
+            options.ShouldResolveSymbols = delegate (string moduleFilePath)
+            { return false; };       // Don't resolve any symbols
 
-            // But if there is a directory called EtwManifests exists, look in there instead. 
+            // But if there is a directory called EtwManifests exists, look in there instead.
             var etwManifestDirPath = Path.Combine(Path.GetDirectoryName(dataFileName), "EtwManifests");
             if (Directory.Exists(etwManifestDirPath))
             {
@@ -593,7 +599,7 @@ namespace EventView.FileFormats.EtlPerf
             {
                 m_traceLog = new TraceLog(etlxFile);
 
-                // Add some more parser that we would like.  
+                // Add some more parser that we would like.
                 new Microsoft.Diagnostics.Tracing.Parsers.ETWClrProfilerTraceEventParser(m_traceLog);
                 new MicrosoftWindowsNDISPacketCaptureTraceEventParser(m_traceLog);
             }
@@ -601,7 +607,7 @@ namespace EventView.FileFormats.EtlPerf
             {
                 if (cachedEtlxFile)
                 {
-                    // Delete the file and try again.  
+                    // Delete the file and try again.
                     object p = EventView.Utils.FileUtilities.ForceDelete(etlxFile);
                     if (!File.Exists(etlxFile))
                     {
@@ -617,7 +623,7 @@ namespace EventView.FileFormats.EtlPerf
                 m_traceLog.CodeAddresses.UnsafePDBMatching = true;
             }
 
-            if (m_traceLog.Truncated)   // Warn about truncation.  
+            if (m_traceLog.Truncated)   // Warn about truncation.
             {
                 throw new Exception("The ETL file was too big to convert and was truncated.\r\nSee log for details");
                 //GuiApp.MainWindow.Dispatcher.BeginInvoke((Action)delegate ()
@@ -627,7 +633,5 @@ namespace EventView.FileFormats.EtlPerf
             }
             return m_traceLog;
         }
-
     }
-
 }

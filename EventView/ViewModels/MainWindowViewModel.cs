@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -13,6 +14,7 @@ namespace EventView.ViewModels
         private bool _isFileOpened;
         private bool _isFileOpening;
         private RelayCommand _openCommand;
+        private string _filePath;
 
         public MainWindowViewModel(IFileFormatFactory fileFormatFactory)
         {
@@ -29,6 +31,20 @@ namespace EventView.ViewModels
         {
             get => _isFileOpening;
             set => SetProperty(ref _isFileOpening, value);
+        }
+
+        public string FilePath
+        {
+            get => _filePath;
+            set => SetProperty(ref _filePath, value);
+        }
+
+        private IEnumerable<IFilePart> _fileParts;
+
+        public IEnumerable<IFilePart> FileParts
+        {
+            get => _fileParts;
+            private set => SetProperty(ref _fileParts, value);
         }
 
         public ICommand OpenCommand => _openCommand ?? (_openCommand = new RelayCommand(async (o) => await OpenFile(), o => !IsFileOpened));
@@ -49,6 +65,8 @@ namespace EventView.ViewModels
                 {
                     IsFileOpening = true;
                     await fileFormat.ParseAsync(ofd.FileName);
+                    FileParts = fileFormat.FileParts;
+                    FilePath = ofd.FileName;
                     IsFileOpened = true;
                 }
                 catch (Exception e)

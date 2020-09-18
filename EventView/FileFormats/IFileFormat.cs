@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EventView.FileFormats
 {
@@ -7,5 +8,6 @@ namespace EventView.FileFormats
         Task ParseAsync(string fileName);
         string FormatName { get; }
         string[] FileExtensions { get; }
+        IList<IFilePart> FileParts { get; }
     }
 }
