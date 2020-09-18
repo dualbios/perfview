@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,8 +42,23 @@
     <Reference Include="Kent.Boogaart.HelperTrinity, Version=1.5.2.0, Culture=neutral, PublicKeyToken=cc96fa93a217f7a1, processorArchitecture=MSIL">
       <HintPath>..\packages\Kent.Boogaart.HelperTrinity.1.5.2\lib\net45\Kent.Boogaart.HelperTrinity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=3.1.8.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.3.1.8\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=3.1.8.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.1.8\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -61,24 +77,38 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FileFormats\ETLPerfFileFormat.cs" />
+    <Compile Include="FileFormats\EtlPerf\ETLPerfFileFormat.cs" />
+    <Compile Include="FileFormats\EtlPerf\EtlPerfPartFactory.cs" />
+    <Compile Include="FileFormats\EtlPerf\IEtlFilePart.cs" />
+    <Compile Include="FileFormats\EtlPerf\IEtlPerfPartFactory.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewTreeGroupFilePart_Temp.cs" />
+    <Compile Include="FileFormats\FileFormatFactory.cs" />
     <Compile Include="FileFormats\IFileFormat.cs" />
     <Compile Include="FileFormats\IFileFormatFactory.cs" />
     <Compile Include="FileFormats\IFilePart.cs" />
     <Compile Include="FileFormats\MemoryAnalyzer.cs" />
-    <Compile Include="FileFormats\PerfViewAspNetStats.cs" />
-    <Compile Include="FileFormats\PerfViewEventSource.cs" />
-    <Compile Include="FileFormats\PerfViewEventStats.cs" />
-    <Compile Include="FileFormats\PerfViewGCStats.cs" />
-    <Compile Include="FileFormats\PerfViewHeapSnapshots.cs" />
-    <Compile Include="FileFormats\PerfViewIisStats.cs" />
-    <Compile Include="FileFormats\PerfViewJitStats.cs" />
-    <Compile Include="FileFormats\PerfViewProcesses.cs" />
-    <Compile Include="FileFormats\PerfViewRuntimeLoaderStats.cs" />
-    <Compile Include="FileFormats\PerfViewStackSourceFilePart_Temp.cs" />
-    <Compile Include="FileFormats\PerfViewTraceInfo.cs" />
-    <Compile Include="FileFormats\PerfViewTreeGroupFilePart.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewAspNetStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewEventSource.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewEventStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewGCStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewHeapSnapshots.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewIisStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewJitStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewProcesses.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewRuntimeLoaderStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewStackSourceFilePart_Temp.cs" />
+    <Compile Include="FileFormats\EtlPerf\PerfViewTraceInfo.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Utils\AppLog.cs" />
+    <Compile Include="Utils\CacheFiles.cs" />
+    <Compile Include="Utils\commandLine.cs" />
+    <Compile Include="Utils\CommandLineArgs.cs" />
+    <Compile Include="Utils\CommandLineUtilities.cs" />
+    <Compile Include="Utils\CommandProcessor.cs" />
+    <Compile Include="Utils\DirectoryUtilities.cs" />
+    <Compile Include="Utils\ExceptionMessage.cs" />
+    <Compile Include="Utils\FileUtilities.cs" />
+    <Compile Include="Utils\Triggers.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
@@ -122,7 +152,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FileFormats\NewFolder1\" />
     <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
@@ -130,9 +159,9 @@
       <Project>{e6eacf92-f22d-47dc-8eeb-9bbc4df1e4d5}</Project>
       <Name>FastSerialization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\PerfView\PerfView.csproj">
-      <Project>{6bac7496-6953-41b8-9042-aae45405a095}</Project>
-      <Name>PerfView</Name>
+    <ProjectReference Include="..\src\HeapDump\HeapDump.csproj">
+      <Project>{80345889-a13d-4f2d-a096-98b95c55bf45}</Project>
+      <Name>HeapDump</Name>
     </ProjectReference>
     <ProjectReference Include="..\src\TraceEvent\TraceEvent.csproj">
       <Project>{b68f4968-a7cf-41cc-ad6e-373db5e67944}</Project>

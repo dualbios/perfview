@@ -1,26 +1,10 @@
-/****************************************************************************/
-/*                                  FileUtilities.cs                        */
-/****************************************************************************/
-
-/*  Copyright (c) Microsoft Corporation.  All rights reserved. */
-/* AUTHOR: Vance Morrison   
- * Date  : 10/20/2007  */
-/****************************************************************************/
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
-namespace Microsoft.Diagnostics.Utilities
+namespace EventView.Utils
 {
-    /******************************************************************************/
-    /// <summary>
-    /// General purpose utilities dealing with archiveFile system files. 
-    /// </summary>
-#if UTILITIES_PUBLIC
-    public 
-#endif
-    static class FileUtilities
+    public static class FileUtilities
     {
         /// <summary>
         /// GetLines works much like File.ReadAllLines, however instead of returning a
@@ -134,7 +118,8 @@ namespace Microsoft.Diagnostics.Utilities
                         TryDelete(deleteingFile);
                     }
                 }
-            } catch { };
+            }
+            catch { };
             return ret;
         }
 
@@ -212,103 +197,6 @@ namespace Microsoft.Diagnostics.Utilities
                 }
             }
             return true;
-        }
-    }
-
-    /// <summary>
-    /// Utilities associated with file name paths. 
-    /// </summary>
-#if UTILITIES_PUBLIC
-    public 
-#endif
-    static class PathUtil
-    {
-        /// <summary>
-        /// Given a path and a superdirectory path relativeToDirectory compute the relative path (the path from) relativeToDirectory
-        /// </summary>
-        public static string PathRelativeTo(string path, string relativeToDirectory)
-        {
-            Debug.Assert(!relativeToDirectory.EndsWith("\\"));
-
-            string fullPath = Path.GetFullPath(path);
-            string fullCurrentDirectory = Path.GetFullPath(relativeToDirectory);
-
-            int commonToSlashIndex = -1;
-            for (int i = 0; i < fullPath.Length; i++)
-            {
-                char cFullPath = fullPath[i];
-                if (i >= fullCurrentDirectory.Length)
-                {
-                    if (cFullPath == '\\')
-                    {
-                        commonToSlashIndex = i;
-                    }
-
-                    break;
-                }
-                char cCurrentDirectory = fullCurrentDirectory[i];
-
-                if (cCurrentDirectory != cFullPath)
-                {
-                    if (char.IsLower(cCurrentDirectory))
-                    {
-                        cCurrentDirectory = (char)(cCurrentDirectory - (char)('a' - 'A'));
-                    }
-
-                    if (char.IsLower(cFullPath))
-                    {
-                        cFullPath = (char)(cFullPath - (char)('a' - 'A'));
-                    }
-
-                    if (cCurrentDirectory != cFullPath)
-                    {
-                        break;
-                    }
-                }
-
-                if (cCurrentDirectory == '\\')
-                {
-                    commonToSlashIndex = i;
-                }
-            }
-
-            // There is no common prefix between the two paths, we give up.
-            if (commonToSlashIndex < 0)
-            {
-                return path;
-            }
-
-            string returnVal = "";
-            int nextSlash = commonToSlashIndex;
-            for (; ; )
-            {
-                if (nextSlash >= fullCurrentDirectory.Length)
-                {
-                    break;
-                }
-
-                if (returnVal.Length > 0)
-                {
-                    returnVal += "\\";
-                }
-
-                returnVal += @"..";
-                if (nextSlash + 1 == fullCurrentDirectory.Length)
-                {
-                    break;
-                }
-
-                nextSlash = fullCurrentDirectory.IndexOf('\\', nextSlash + 1);
-                if (nextSlash < 0)
-                {
-                    break;
-                }
-            }
-
-            string rest = fullPath.Substring(commonToSlashIndex + 1);
-            returnVal = Path.Combine(returnVal, rest);
-            Debug.Assert(string.Compare(Path.GetFullPath(Path.Combine(relativeToDirectory, returnVal)), fullPath, StringComparison.OrdinalIgnoreCase) == 0);
-            return returnVal;
         }
     }
 }

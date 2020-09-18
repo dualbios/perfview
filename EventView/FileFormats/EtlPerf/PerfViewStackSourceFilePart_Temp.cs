@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace EventView.FileFormats
+namespace EventView.FileFormats.EtlPerf
 {
     public class PerfViewStackSourceFilePart_Temp : IFilePart
     {

@@ -2,8 +2,10 @@
 
 namespace EventView.FileFormats
 {
-    internal interface IFileFormat
+    public interface IFileFormat
     {
-        Task Open(string fileName);
+        Task ParseAsync(string fileName);
+        string FormatName { get; }
+        string[] FileExtensions { get; }
     }
 }

@@ -1,21 +1,23 @@
 ﻿using System.Threading.Tasks;
 
-namespace EventView.FileFormats
+namespace EventView.FileFormats.EtlPerf
 {
-    internal class PerfViewTraceInfo : IFilePart
+    internal class PerfViewIisStats : IFilePart
     {
         private ETLPerfFileFormat eTLPerfFileFormat;
 
-        public PerfViewTraceInfo(ETLPerfFileFormat eTLPerfFileFormat)
+        public PerfViewIisStats(ETLPerfFileFormat eTLPerfFileFormat)
         {
             this.eTLPerfFileFormat = eTLPerfFileFormat;
         }
 
-        public string Group { get; }
+        public string Group { get; } = "Advanced Group";
 
         public Task Open()
         {
             throw new System.NotImplementedException();
         }
+
+        public string Name { get; }
     }
 }

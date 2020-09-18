@@ -6,5 +6,6 @@ namespace EventView.FileFormats
     {
         string Group { get; }
         Task Open();
+        string Name { get; }
     }
 }

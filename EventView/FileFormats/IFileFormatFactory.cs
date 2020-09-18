@@ -1,6 +1,8 @@
-﻿namespace EventView.FileFormats
+﻿using System.Collections.Generic;
+
+namespace EventView.FileFormats
 {
-    internal interface IFileFormatFactory
+    public interface IFileFormatFactory
     {
         IFileFormat Get(string fileName);
     }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace EventView.FileFormats
+namespace EventView.FileFormats.EtlPerf
 {
     public class PerfViewTreeGroupFilePart_Temp : IFilePart
     {
@@ -10,5 +10,7 @@ namespace EventView.FileFormats
         {
             throw new System.NotImplementedException();
         }
+
+        public string Name { get; }
     }
 }

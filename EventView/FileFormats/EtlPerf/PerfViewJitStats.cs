@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 
-namespace EventView.FileFormats
+namespace EventView.FileFormats.EtlPerf
 {
-    internal class PerfViewEventStats : IFilePart
+    internal class PerfViewJitStats : IFilePart
     {
         private ETLPerfFileFormat eTLPerfFileFormat;
 
-        public PerfViewEventStats(ETLPerfFileFormat eTLPerfFileFormat)
+        public PerfViewJitStats(ETLPerfFileFormat eTLPerfFileFormat)
         {
             this.eTLPerfFileFormat = eTLPerfFileFormat;
         }
@@ -17,5 +17,7 @@ namespace EventView.FileFormats
         {
             throw new System.NotImplementedException();
         }
+
+        public string Name { get; }
     }
 }

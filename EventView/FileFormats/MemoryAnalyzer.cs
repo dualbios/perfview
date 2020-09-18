@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using EventView.FileFormats.EtlPerf;
 
 namespace EventView.FileFormats
 {
@@ -13,5 +14,7 @@ namespace EventView.FileFormats
         {
             throw new System.NotImplementedException();
         }
+
+        public string Name { get; }
     }
 }
