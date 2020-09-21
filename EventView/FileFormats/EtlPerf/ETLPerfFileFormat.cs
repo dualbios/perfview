@@ -27,9 +27,8 @@ namespace EventView.FileFormats.EtlPerf
 
         private TraceLog m_traceLog;
 
-        public ETLPerfFileFormat(IEtlPerfPartFactory etlPerfPartFactory)
+        public ETLPerfFileFormat()
         {
-            _etlPerfPartFactory = etlPerfPartFactory;
         }
 
         public async Task ParseAsync(string fileName)
@@ -78,211 +77,13 @@ namespace EventView.FileFormats.EtlPerf
             //var experimental = new PerfViewTreeGroup("Experimental Group");
             FileParts = new List<IFilePart>();
 
-            //bool hasCPUStacks = false;
-            //bool hasDllStacks = false;
-            //bool hasCSwitchStacks = false;
-            //bool hasReadyThreadStacks = false;
-            //bool hasHeapStacks = false;
-            //bool hasGCAllocationTicks = false;
-            //bool hasExceptions = false;
-            //bool hasManagedLoads = false;
-            //bool hasAspNet = false;
-            //bool hasIis = false;
-            //bool hasDiskStacks = false;
-            //bool hasAnyStacks = false;
-            //bool hasVirtAllocStacks = false;
-            //bool hasFileStacks = false;
-            //bool hasTpl = false;
-            //bool hasTplStacks = false;
-            //bool hasGCHandleStacks = false;
-            //bool hasMemAllocStacks = false;
-            //bool hasJSHeapDumps = false;
-            //bool hasDotNetHeapDumps = false;
-            //bool hasWCFRequests = false;
-            //bool hasCCWRefCountStacks = false;
-            //bool hasNetNativeCCWRefCountStacks = false;
-            //bool hasWindowsRefCountStacks = false;
-            //bool hasPinObjectAtGCTime = false;
-            //bool hasObjectUpdate = false;
-            //bool hasGCEvents = false;
-            //bool hasProjectNExecutionTracingEvents = false;
-            //bool hasDefenderEvents = false;
-            //bool hasTypeLoad = false;
-            //bool hasAssemblyLoad = false;
-            //bool hasJIT = false;
-
-            //var stackEvents = new List<TraceEventCounts>();
-            //foreach (var counts in tracelog.Stats)
-            //{
-            //    var name = counts.EventName;
-            //    if (!hasCPUStacks && name.StartsWith("PerfInfo"))
-            //    {
-            //        hasCPUStacks = true;                // Even without true stacks we can display something in the stack viewer.
-            //    }
-
-            //    if (!hasAspNet && name.StartsWith("AspNetReq"))
-            //    {
-            //        hasAspNet = true;
-            //    }
-
-            //    if (!hasIis && name.StartsWith("IIS"))
-            //    {
-            //        hasIis = true;
-            //    }
-
-            //    if (counts.ProviderGuid == ApplicationServerTraceEventParser.ProviderGuid)
-            //    {
-            //        hasWCFRequests = true;
-            //    }
-
-            //    if (name.StartsWith("JSDumpHeapEnvelope"))
-            //    {
-            //        hasJSHeapDumps = true;
-            //    }
-
-            //    if (name.StartsWith("GC/Start"))
-            //    {
-            //        hasGCEvents = true;
-            //    }
-
-            //    if (name.StartsWith("GC/BulkNode"))
-            //    {
-            //        hasDotNetHeapDumps = true;
-            //    }
-
-            //    if (name.StartsWith("GC/PinObjectAtGCTime"))
-            //    {
-            //        hasPinObjectAtGCTime = true;
-            //    }
-
-            //    if (name.StartsWith("GC/BulkSurvivingObjectRanges") || name.StartsWith("GC/BulkMovedObjectRanges"))
-            //    {
-            //        hasObjectUpdate = true;
-            //    }
-
-            //    if (counts.ProviderGuid == TplEtwProviderTraceEventParser.ProviderGuid)
-            //    {
-            //        hasTpl = true;
-            //    }
-
-            //    if (counts.ProviderGuid == MicrosoftAntimalwareEngineTraceEventParser.ProviderGuid)
-            //    {
-            //        hasDefenderEvents = true;
-            //    }
-
-            //    if (name.StartsWith("Method/JittingStarted"))
-            //    {
-            //        hasJIT = true;
-            //    }
-            //    if (name.StartsWith("TypeLoad/Start"))
-            //    {
-            //        hasTypeLoad = true;
-            //    }
-            //    if (name.StartsWith("Loader/AssemblyLoad"))
-            //    {
-            //        hasAssemblyLoad = true;
-            //    }
-
-            //    if (counts.StackCount > 0)
-            //    {
-            //        hasAnyStacks = true;
-            //        if (counts.ProviderGuid == ETWClrProfilerTraceEventParser.ProviderGuid && name.StartsWith("ObjectAllocated"))
-            //        {
-            //            hasMemAllocStacks = true;
-            //        }
-
-            //        if (name.StartsWith("GC/SampledObjectAllocation"))
-            //        {
-            //            hasMemAllocStacks = true;
-            //        }
-
-            //        if (name.StartsWith("GC/CCWRefCountChange"))
-            //        {
-            //            hasCCWRefCountStacks = true;
-            //        }
-
-            //        if (name.StartsWith("TaskCCWRef"))
-            //        {
-            //            hasNetNativeCCWRefCountStacks = true;
-            //        }
-
-            //        if (name.StartsWith("Object/CreateHandle"))
-            //        {
-            //            hasWindowsRefCountStacks = true;
-            //        }
-
-            //        if (name.StartsWith("Image"))
-            //        {
-            //            hasDllStacks = true;
-            //        }
-
-            //        if (name.StartsWith("HeapTrace"))
-            //        {
-            //            hasHeapStacks = true;
-            //        }
-
-            //        if (name.StartsWith("Thread/CSwitch"))
-            //        {
-            //            hasCSwitchStacks = true;
-            //        }
-
-            //        if (name.StartsWith("GC/AllocationTick"))
-            //        {
-            //            hasGCAllocationTicks = true;
-            //        }
-
-            //        if (name.StartsWith("Exception") || name.StartsWith("PageFault/AccessViolation"))
-            //        {
-            //            hasExceptions = true;
-            //        }
-
-            //        if (name.StartsWith("GC/SetGCHandle"))
-            //        {
-            //            hasGCHandleStacks = true;
-            //        }
-
-            //        if (name.StartsWith("Loader/ModuleLoad"))
-            //        {
-            //            hasManagedLoads = true;
-            //        }
-
-            //        if (name.StartsWith("VirtualMem"))
-            //        {
-            //            hasVirtAllocStacks = true;
-            //        }
-
-            //        if (name.StartsWith("Dispatcher/ReadyThread"))
-            //        {
-            //            hasReadyThreadStacks = true;
-            //        }
-
-            //        if (counts.ProviderGuid == TplEtwProviderTraceEventParser.ProviderGuid)
-            //        {
-            //            hasTplStacks = true;
-            //        }
-
-            //        if (name.StartsWith("DiskIO"))
-            //        {
-            //            hasDiskStacks = true;
-            //        }
-
-            //        if (name.StartsWith("FileIO"))
-            //        {
-            //            hasFileStacks = true;
-            //        }
-
-            //        if (name.StartsWith("MethodEntry"))
-            //        {
-            //            hasProjectNExecutionTracingEvents = true;
-            //        }
-            //    }
-            //}
+            EtlPerfFileStats fileStats = _etlPerfPartFactory.CreateStats(tracelog.Stats);
 
             //m_Children.Add(new PerfViewTraceInfo(this));
             //m_Children.Add(new PerfViewProcesses(this));
 
             FileParts.Clear();
-            foreach (IEtlFilePart etlFilePart in _etlPerfPartFactory.GetSupportedPart())
+            foreach (IEtlFilePart etlFilePart in _etlPerfPartFactory.GetParts(fileStats))
             {
                 await etlFilePart.Init(tracelog);
                 FileParts.Add(etlFilePart);
@@ -303,38 +104,38 @@ namespace EventView.FileFormats.EtlPerf
             ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Processor"));
             ////}
 
-            //if (hasCSwitchStacks)
-            //{
-            //    if (hasTplStacks)
-            //    {
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time"));
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with Tasks)"));
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with StartStop Activities)"));
-            //    }
-            //    else
-            //    {
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time"));
-            //    }
+            ////if (hasCSwitchStacks)
+            ////{
+            ////    if (hasTplStacks)
+            ////    {
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time"));
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with Tasks)"));
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with StartStop Activities)"));
+            ////    }
+            ////    else
+            ////    {
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time"));
+            ////    }
 
-            //    if (hasReadyThreadStacks)
-            //    {
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with ReadyThread)"));
-            //    }
-            //}
-            //else if (hasCPUStacks && hasTplStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with StartStop Activities) (CPU ONLY)"));
-            //}
+            ////    if (hasReadyThreadStacks)
+            ////    {
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with ReadyThread)"));
+            ////    }
+            ////}
+            ////else if (hasCPUStacks && hasTplStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Thread Time (with StartStop Activities) (CPU ONLY)"));
+            ////}
 
-            //if (hasDiskStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Disk I/O"));
-            //}
+            ////if (hasDiskStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Disk I/O"));
+            ////}
 
-            //if (hasFileStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "File I/O"));
-            //}
+            ////if (hasFileStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "File I/O"));
+            ////}
 
             //if (hasHeapStacks)
             //{
@@ -346,6 +147,7 @@ namespace EventView.FileFormats.EtlPerf
             //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Alloc"));
             //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Reserve"));
             //}
+
             //if (hasGCAllocationTicks)
             //{
             //    if (hasObjectUpdate)

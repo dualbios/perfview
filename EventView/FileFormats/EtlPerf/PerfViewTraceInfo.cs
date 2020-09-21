@@ -22,5 +22,10 @@ namespace EventView.FileFormats.EtlPerf
         {
             return Task.CompletedTask;
         }
+
+        public bool IsExist(EtlPerfFileStats stats)
+        {
+            return true;
+        }
     }
 }

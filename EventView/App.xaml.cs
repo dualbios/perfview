@@ -31,12 +31,12 @@ namespace EventView
             services.AddSingleton<IFileFormatFactory, FileFormatFactory>();
 
             services.AddSingleton<IFileFormat, FileFormats.EtlPerf.ETLPerfFileFormat>();
-            services.AddSingleton<FileFormats.EtlPerf.IEtlPerfPartFactory, FileFormats.EtlPerf.EtlPerfPartFactory>();
+            //services.AddSingleton<FileFormats.EtlPerf.IEtlPerfPartFactory, FileFormats.EtlPerf.EtlPerfPartFactory>();
 
-            services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewTraceInfo>();
-            services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewProcesses>();
-            services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventStats>();
-            services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventSource>();
+            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewTraceInfo>();
+            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewProcesses>();
+            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventStats>();
+            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventSource>();
 
             return services.BuildServiceProvider();
         }

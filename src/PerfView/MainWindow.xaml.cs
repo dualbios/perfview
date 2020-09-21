@@ -3,6 +3,7 @@ using Microsoft.Diagnostics.Tracing.Session;
 using Microsoft.Diagnostics.Utilities;
 using PerfView.Dialogs;
 using PerfView.GuiUtilities;
+using PerfView.PerfViewData;
 using PerfViewExtensibility;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using PerfView.PerfViewData;
 using Utilities;
 
 /* Master TODO list */

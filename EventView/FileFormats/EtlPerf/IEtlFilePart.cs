@@ -6,5 +6,6 @@ namespace EventView.FileFormats.EtlPerf
     public interface IEtlFilePart : IFilePart
     {
         Task Init(TraceLog traceLog);
+        bool IsExist(EtlPerfFileStats stats);
     }
 }

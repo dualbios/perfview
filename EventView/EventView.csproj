@@ -77,10 +77,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FileFormats\EtlPerf\EtlPerfFileStats.cs" />
+    <Compile Include="FileFormats\EtlPerf\EtlStackSourceFilePart.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\DiskIOFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\ETLPerfFileFormat.cs" />
     <Compile Include="FileFormats\EtlPerf\EtlPerfPartFactory.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\FileIOFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\IEtlFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\IEtlPerfPartFactory.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ProcessesFilesRegistryFilePart.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ThreadTimeFilePart.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ThreadTimeWithReadyThread.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ThreadTimeWithStartStopActivities.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ThreadTimeWithStartStopActivitiesCPUONLY.cs" />
+    <Compile Include="FileFormats\EtlPerf\Parts\ThreadTimeWithTasksFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\PerfViewTreeGroupFilePart_Temp.cs" />
     <Compile Include="FileFormats\FileFormatFactory.cs" />
     <Compile Include="FileFormats\IFileFormat.cs" />
