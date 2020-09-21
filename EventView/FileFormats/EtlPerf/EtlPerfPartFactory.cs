@@ -91,6 +91,23 @@ namespace EventView.FileFormats.EtlPerf
             yield return new DiskIOFilePart();
             yield return new FileIOFilePart();
 
+            yield return new NetOSHeapAlloc();
+            yield return new NetVirtualAlloc();
+            yield return new NetVirtualReserve();
+
+            yield return new GCHeapNetMemCoarseSampling();
+            yield return new Gen2ObjectDeathsCoarseSampling();
+            yield return new GCHeapAllocIgnoreFreeCoarseSampling();
+
+            yield return new GCHeapNetMem();
+            yield return new GCHeapAllocIgnoreFree();
+            yield return new Gen2ObjectDeaths();
+
+            yield return new ImageLoad();
+            yield return new ManagedLoad();
+            yield return new Exceptions();
+            yield return new Pinning();
+
             yield return new PerfViewEventStats();
             yield return new PerfViewEventSource();
         }

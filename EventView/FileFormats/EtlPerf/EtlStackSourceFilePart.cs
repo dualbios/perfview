@@ -21,17 +21,24 @@ namespace EventView.FileFormats.EtlPerf
 
         public string Group { get; }
         public string Name { get; }
+        public TraceLog TraceLog { get; private set; }
 
-        public Task Init(TraceLog traceLog)
+        public IFileFormat FileFormat { get; private set; }
+
+        public virtual Task Init(IFileFormat fileFormat, TraceLog traceLog)
         {
-            throw new System.NotImplementedException();
+            FileFormat = fileFormat;
+            TraceLog = traceLog;
+
+            return Task.CompletedTask;
         }
+
 
         public abstract bool IsExist(EtlPerfFileStats stats);
 
-        public Task Open()
+        public virtual Task Open()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

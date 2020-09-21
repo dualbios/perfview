@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Parsers;
+using Microsoft.Diagnostics.Tracing.Stacks;
 using PerfEventView.Utils;
+using PerfEventView.Utils.Process;
 
 namespace EventView.FileFormats.EtlPerf
 {
@@ -49,27 +54,27 @@ namespace EventView.FileFormats.EtlPerf
             }));
 
             // Warn about possible Win8 incompatibility.
-            var logVer = tracelog.OSVersion.Major * 10 + tracelog.OSVersion.Minor;
-            if (62 <= logVer)
-            {
-                var ver = Environment.OSVersion.Version.Major * 10 + Environment.OSVersion.Version.Minor;
-                if (ver < 62)       // We are decoding on less than windows 8
-                {
-                    //if (!m_notifiedAboutWin8)
-                    //{
-                    //    m_notifiedAboutWin8 = true;
-                    var versionMismatchWarning = "This trace was captured on Window 8 and is being read\r\n" +
-                                                 "on and earlier OS.  If you experience any problems please\r\n" +
-                                                 "read the trace on an Windows 8 OS.";
-                    logWriter.WriteLine(versionMismatchWarning);
-                    throw new Exception(versionMismatchWarning);
-                    //parentWindow.Dispatcher.BeginInvoke((Action)delegate ()
-                    //{
-                    //    MessageBox.Show(parentWindow, versionMismatchWarning, "Log File Version Mismatch", MessageBoxButton.OK);
-                    //});
-                    //}
-                }
-            }
+            //var logVer = tracelog.OSVersion.Major * 10 + tracelog.OSVersion.Minor;
+            //if (62 <= logVer)
+            //{
+            //    var ver = Environment.OSVersion.Version.Major * 10 + Environment.OSVersion.Version.Minor;
+            //    if (ver < 62)       // We are decoding on less than windows 8
+            //    {
+            //        //if (!m_notifiedAboutWin8)
+            //        //{
+            //        //    m_notifiedAboutWin8 = true;
+            //        var versionMismatchWarning = "This trace was captured on Window 8 and is being read\r\n" +
+            //                                     "on and earlier OS.  If you experience any problems please\r\n" +
+            //                                     "read the trace on an Windows 8 OS.";
+            //        logWriter.WriteLine(versionMismatchWarning);
+            //        throw new Exception(versionMismatchWarning);
+            //        //parentWindow.Dispatcher.BeginInvoke((Action)delegate ()
+            //        //{
+            //        //    MessageBox.Show(parentWindow, versionMismatchWarning, "Log File Version Mismatch", MessageBoxButton.OK);
+            //        //});
+            //        //}
+            //    }
+            //}
 
             //var advanced = new PerfViewTreeGroup("Advanced Group");
             //var memory = new PerfViewTreeGroup("Memory Group");
@@ -85,7 +90,7 @@ namespace EventView.FileFormats.EtlPerf
             FileParts.Clear();
             foreach (IEtlFilePart etlFilePart in _etlPerfPartFactory.GetParts(fileStats))
             {
-                await etlFilePart.Init(tracelog);
+                await etlFilePart.Init(this, tracelog);
                 FileParts.Add(etlFilePart);
             }
 
@@ -137,52 +142,53 @@ namespace EventView.FileFormats.EtlPerf
             ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "File I/O"));
             ////}
 
-            //if (hasHeapStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net OS Heap Alloc"));
-            //}
+            ////if (hasHeapStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net OS Heap Alloc"));
+            ////}
 
-            //if (hasVirtAllocStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Alloc"));
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Reserve"));
-            //}
+            ////if (hasVirtAllocStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Alloc"));
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Net Virtual Reserve"));
+            ////}
 
-            //if (hasGCAllocationTicks)
-            //{
-            //    if (hasObjectUpdate)
-            //    {
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Net Mem (Coarse Sampling)"));
-            //        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Gen 2 Object Deaths (Coarse Sampling)"));
-            //    }
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Alloc Ignore Free (Coarse Sampling)"));
-            //}
-            //if (hasMemAllocStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Net Mem"));
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Alloc Ignore Free"));
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Gen 2 Object Deaths"));
-            //}
+            ////if (hasGCAllocationTicks)
+            ////{
+            ////    if (hasObjectUpdate)
+            ////    {
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Net Mem (Coarse Sampling)"));
+            ////        m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Gen 2 Object Deaths (Coarse Sampling)"));
+            ////    }
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Alloc Ignore Free (Coarse Sampling)"));
+            ////}
 
-            //if (hasDllStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Image Load"));
-            //}
+            ////if (hasMemAllocStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Net Mem"));
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "GC Heap Alloc Ignore Free"));
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Memory Group", "Gen 2 Object Deaths"));
+            ////}
 
-            //if (hasManagedLoads)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Managed Load"));
-            //}
+            ////if (hasDllStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Image Load"));
+            ////}
 
-            //if (hasExceptions)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Exceptions"));
-            //}
+            ////if (hasManagedLoads)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Managed Load"));
+            ////}
 
-            //if (hasGCHandleStacks)
-            //{
-            //    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Pinning"));
-            //}
+            ////if (hasExceptions)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Exceptions"));
+            ////}
+
+            ////if (hasGCHandleStacks)
+            ////{
+            ////    m_Children.Add(new PerfViewStackSourceFilePart_Temp(this, "Pinning"));
+            ////}
 
             //if (hasPinObjectAtGCTime)
             //{
@@ -434,6 +440,22 @@ namespace EventView.FileFormats.EtlPerf
                 //});
             }
             return m_traceLog;
+        }
+
+        public List<IProcess> GetProcesses(string filePath, CommandLineArgs args, TextWriter log)
+        {
+            TraceLog eventLog = GetTraceLog(filePath, args, log);
+            return eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
+                {
+                    StartTime = process.StartTime,
+                    EndTime = process.EndTime,
+                    CPUTimeMSec = process.CPUMSec,
+                    ParentID = process.ParentID,
+                    CommandLine = process.CommandLine,
+                    ProcessID = process.ProcessID
+                })
+                .Cast<IProcess>()
+                .ToList();
         }
     }
 }
