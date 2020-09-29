@@ -80,6 +80,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Dialogs\IDialog.cs" />
+    <Compile Include="Dialogs\IDialogPlaceHolder.cs" />
     <Compile Include="FileFormats\EtlPerf\EtlPerfFileStats.cs" />
     <Compile Include="FileFormats\EtlPerf\EtlStackSourceFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\Parts\DiskIOFilePart.cs" />
@@ -140,7 +143,11 @@
     <Compile Include="Utils\Process\ProcessInfo.cs" />
     <Compile Include="Utils\Triggers.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\ProcessListDialogViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ProcessListDialogControl.xaml.cs">
+      <DependentUpon>ProcessListDialogControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -153,6 +160,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ProcessListDialogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -181,9 +192,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\src\FastSerialization\FastSerialization.csproj">
       <Project>{e6eacf92-f22d-47dc-8eeb-9bbc4df1e4d5}</Project>

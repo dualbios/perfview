@@ -3,22 +3,62 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using EventView.Dialogs;
 using EventView.FileFormats;
 using Microsoft.Win32;
 
 namespace EventView.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IDialogPlaceHolder
     {
         private readonly IFileFormatFactory _fileFormatFactory;
+        private ICommand _cancelCommand;
+        private IDialog _currentDialog = null;
+        private IDialog _dialogContainer;
+        private IEnumerable<IFilePart> _fileParts;
+        private string _filePath;
         private bool _isFileOpened;
         private bool _isFileOpening;
+        private Action<IDialog> _okAction = null;
+        private RelayCommand _okCommand = null;
         private RelayCommand _openCommand;
-        private string _filePath;
+
+        private ICommand _openPartCommand = null;
 
         public MainWindowViewModel(IFileFormatFactory fileFormatFactory)
         {
             _fileFormatFactory = fileFormatFactory;
+            _fileFormatFactory.Init(this);
+        }
+
+        public ICommand CancelCommand
+        {
+            get
+            {
+                if (_cancelCommand == null)
+                {
+                    _cancelCommand = new RelayCommand(c => CancelAction(), c => DialogContainer != null);
+                }
+                return _cancelCommand;
+            }
+        }
+
+        public IDialog DialogContainer
+        {
+            get => _dialogContainer;
+            set => SetProperty(ref _dialogContainer, value);
+        }
+
+        public IEnumerable<IFilePart> FileParts
+        {
+            get => _fileParts;
+            private set => SetProperty(ref _fileParts, value);
+        }
+
+        public string FilePath
+        {
+            get => _filePath;
+            set => SetProperty(ref _filePath, value);
         }
 
         public bool IsFileOpened
@@ -33,21 +73,52 @@ namespace EventView.ViewModels
             set => SetProperty(ref _isFileOpening, value);
         }
 
-        public string FilePath
+        public ICommand OkCommand
         {
-            get => _filePath;
-            set => SetProperty(ref _filePath, value);
-        }
-
-        private IEnumerable<IFilePart> _fileParts;
-
-        public IEnumerable<IFilePart> FileParts
-        {
-            get => _fileParts;
-            private set => SetProperty(ref _fileParts, value);
+            get
+            {
+                if (_okCommand == null)
+                {
+                    _okCommand = new RelayCommand(o => OkAction(), o => DialogContainer != null);
+                }
+                return _okCommand;
+            }
         }
 
         public ICommand OpenCommand => _openCommand ?? (_openCommand = new RelayCommand(async (o) => await OpenFile(), o => !IsFileOpened));
+
+        public ICommand OpenPartCommand
+        {
+            get
+            {
+                if (_openPartCommand == null)
+                {
+                    _openPartCommand = new RelayCommand(async x => await OpenPart(x));
+                }
+
+                return _openPartCommand;
+            }
+        }
+
+        public void Show(IDialog dialog, Action<IDialog> okAction)
+        {
+            DialogContainer = dialog;
+            _currentDialog = dialog;
+            _okAction = okAction;
+        }
+
+        private void CancelAction()
+        {
+            _currentDialog = null;
+            DialogContainer = null;
+        }
+
+        private void OkAction()
+        {
+            _okAction(_currentDialog);
+            _currentDialog = null;
+            DialogContainer = null;
+        }
 
         private async Task OpenFile()
         {
@@ -77,6 +148,15 @@ namespace EventView.ViewModels
                 {
                     IsFileOpening = false;
                 }
+            }
+        }
+
+        private async Task OpenPart(object o)
+        {
+            IFilePart filePart = (o as IFilePart);
+            if (filePart != null)
+            {
+                await filePart.Open();
             }
         }
     }

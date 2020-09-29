@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EventView.Dialogs;
 using Microsoft.Diagnostics.Tracing.Etlx;
 
 namespace EventView.FileFormats.EtlPerf
@@ -10,5 +11,7 @@ namespace EventView.FileFormats.EtlPerf
         IEnumerable<IEtlFilePart> GetParts(EtlPerfFileStats stats);
 
         IEnumerable<IEtlFilePart> GetSupportedPart();
+
+        void Init(IDialogPlaceHolder dialogPlaceHolder);
     }
 }

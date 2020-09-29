@@ -5,20 +5,21 @@ namespace EventView.FileFormats.EtlPerf
 {
     internal class PerfViewEventStats : IEtlFilePart
     {
-
         public PerfViewEventStats()
         {
         }
 
+        public IFileFormat FileFormat => throw new System.NotImplementedException();
         public string Group { get; } = "Advanced Group";
 
-        public Task Open()
+        public string Name { get; } = "PerfViewEventStats";
+
+        public Task Init(TraceLog traceLog)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
 
-        public string Name { get; } = "PerfViewEventStats";
-        public Task Init(TraceLog traceLog)
+        public Task Init(IFileFormat fileFormat, TraceLog traceLog)
         {
             return Task.CompletedTask;
         }
@@ -26,6 +27,11 @@ namespace EventView.FileFormats.EtlPerf
         public bool IsExist(EtlPerfFileStats stats)
         {
             return true;
+        }
+
+        public Task Open()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

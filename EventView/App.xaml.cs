@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using EventView.Dialogs;
 using EventView.FileFormats;
 using EventView.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,28 +18,28 @@ namespace EventView
         {
             base.OnStartup(e);
 
-            serviceProvider = CreateServices();
+            services.AddSingleton<IFileFormat, FileFormats.EtlPerf.ETLPerfFileFormat>();
+            services.AddSingleton<IFileFormatFactory, FileFormatFactory>();
+            //services.AddSingleton<MainWindowViewModel, MainWindowViewModel>();
+            services.AddSingleton<IDialogPlaceHolder, MainWindowViewModel>(x=> GetMainWindowViewModel(x.GetService<IFileFormatFactory>()));
 
-            var dataContext = serviceProvider.GetService<MainWindowViewModel>();
+            serviceProvider = services.BuildServiceProvider();
+
+            IFileFormatFactory fileFormatFactory = serviceProvider.GetRequiredService<IFileFormatFactory>();
+            var dataContext = GetMainWindowViewModel(fileFormatFactory);
             var view = new MainWindow() { DataContext = dataContext };
             view.Show();
         }
 
-        private ServiceProvider CreateServices()
+        private MainWindowViewModel mainWindowViewModel = null;
+        private MainWindowViewModel GetMainWindowViewModel(IFileFormatFactory fileFormatFactory)
         {
-            services.AddSingleton<MainWindowViewModel, MainWindowViewModel>();
+            if (mainWindowViewModel == null)
+            {
+                mainWindowViewModel = new MainWindowViewModel(fileFormatFactory);
+            }
 
-            services.AddSingleton<IFileFormatFactory, FileFormatFactory>();
-
-            services.AddSingleton<IFileFormat, FileFormats.EtlPerf.ETLPerfFileFormat>();
-            //services.AddSingleton<FileFormats.EtlPerf.IEtlPerfPartFactory, FileFormats.EtlPerf.EtlPerfPartFactory>();
-
-            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewTraceInfo>();
-            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewProcesses>();
-            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventStats>();
-            //services.AddSingleton<FileFormats.EtlPerf.IEtlFilePart, FileFormats.EtlPerf.PerfViewEventSource>();
-
-            return services.BuildServiceProvider();
+            return mainWindowViewModel;
         }
     }
 }

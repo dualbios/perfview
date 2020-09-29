@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="http://schemas.kent.boogaart.com/converters"
+        xmlns:localConverters="clr-namespace:EventView.Converters"
         xmlns:local="clr-namespace:EventView"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -11,27 +12,66 @@
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="ReversedVisibilityConverter" IsReversed="True"></converters:BooleanToVisibilityConverter>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></BooleanToVisibilityConverter>
+            <localConverters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"></localConverters:NullToVisibilityConverter>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid>
-            <Grid Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid>
+                <Grid Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Margin" Value="4"></Setter>
+                                    <Setter Property="Width" Value="120"></Setter>
+                                    <Setter Property="Height" Value="80"></Setter>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Content="Open ..." Command="{Binding OpenCommand}"></Button>
+                            <Button Content="Collect ..."></Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+                <DockPanel LastChildFill="True" Visibility="{Binding IsFileOpened, Converter={StaticResource BooleanToVisibilityConverter} }">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
                         <StackPanel.Resources>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Margin" Value="4"></Setter>
-                                <Setter Property="Width" Value="120"></Setter>
-                                <Setter Property="Height" Value="80"></Setter>
+                                <Setter Property="Width" Value="60"></Setter>
+                                <Setter Property="Height" Value="30"></Setter>
                             </Style>
                         </StackPanel.Resources>
-                        <Button Content="Open ..." Command="{Binding OpenCommand}"></Button>
-                        <Button Content="Collect ..."></Button>
+                        <Button Content="Collect"></Button>
+                        <Button Content="Run"></Button>
                     </StackPanel>
-                </Grid>
+                    <!--<TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>-->
+                    <ListBox ItemsSource="{Binding FileParts}" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10">
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <Button Content="Open" Command="{Binding DataContext.OpenPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"></Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ContentControl Content="{Binding MainObject}"></ContentControl>
+                </DockPanel>
             </Grid>
-            <DockPanel LastChildFill="True" Visibility="{Binding IsFileOpened, Converter={StaticResource BooleanToVisibilityConverter} }">
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
+
+            <Grid Background="DimGray"
+            Visibility="{Binding IsFileOpening, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200 0">
+                    <ProgressBar IsIndeterminate="True"  Height="16" VerticalAlignment="Center" ></ProgressBar>
+                    <TextBlock Text="Loading ..." HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <DockPanel LastChildFill="True" Margin="4" Visibility="{Binding DialogContainer, Converter={StaticResource NullToVisibilityConverter}}">
+            <TextBlock Text="Dialog" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#7F1D1D1D"></TextBlock>
+            <Grid DockPanel.Dock="Bottom" Background="#7F1D1D1D">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Button}">
                             <Setter Property="Margin" Value="4"></Setter>
@@ -39,22 +79,11 @@
                             <Setter Property="Height" Value="30"></Setter>
                         </Style>
                     </StackPanel.Resources>
-                    <Button Content="Collect"></Button>
-                    <Button Content="Run"></Button>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}"></Button>
+                    <Button Content="Ok" Command="{Binding OkCommand}"></Button>
                 </StackPanel>
-                <!--<TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>-->
-                <ListBox ItemsSource="{Binding FileParts}" DisplayMemberPath="Name">
-                </ListBox>
-                <ContentControl Content="{Binding MainObject}"></ContentControl>
-            </DockPanel>
-        </Grid>
-
-        <Grid Background="DimGray"
-            Visibility="{Binding IsFileOpening, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200 0">
-                <ProgressBar IsIndeterminate="True"  Height="16" VerticalAlignment="Center" ></ProgressBar>
-                <TextBlock Text="Loading ..." HorizontalAlignment="Center"/>
-            </StackPanel>
-        </Grid>
+            </Grid>
+            <ContentControl Content="{Binding DialogContainer}"></ContentControl>
+        </DockPanel>
     </Grid>
 </Window>

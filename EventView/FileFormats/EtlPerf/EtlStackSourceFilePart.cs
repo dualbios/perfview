@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using EventView.Dialogs;
+using EventView.ViewModels;
 using Microsoft.Diagnostics.Tracing.Etlx;
 
 namespace EventView.FileFormats.EtlPerf
@@ -38,7 +40,12 @@ namespace EventView.FileFormats.EtlPerf
 
         public virtual Task Open()
         {
-            
+            return Task.CompletedTask;
+        }
+
+        public ProcessListDialogViewModel GetProcessDialog()
+        {
+            return new ProcessListDialogViewModel();
         }
     }
 }

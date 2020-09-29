@@ -17,6 +17,9 @@ namespace EventView.FileFormats.EtlPerf
         }
 
         public string Name { get; } = "PerfViewEventSource";
+
+        public IFileFormat FileFormat => throw new System.NotImplementedException();
+
         public Task Init(TraceLog traceLog)
         {
             return Task.CompletedTask;
@@ -25,6 +28,11 @@ namespace EventView.FileFormats.EtlPerf
         public bool IsExist(EtlPerfFileStats stats)
         {
             return true;
+        }
+
+        public Task Init(IFileFormat fileFormat, TraceLog traceLog)
+        {
+            return Task.CompletedTask;
         }
     }
 }

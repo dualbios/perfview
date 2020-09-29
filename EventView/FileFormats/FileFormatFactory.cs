@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EventView.Dialogs;
 
 namespace EventView.FileFormats
 {
@@ -17,6 +18,14 @@ namespace EventView.FileFormats
         {
             string fileExtension = Path.GetExtension(fileName);
             return _fileFormats.FirstOrDefault(x => x.FileExtensions.Contains(fileExtension));
+        }
+
+        public void Init(IDialogPlaceHolder dialogPlaceHolder)
+        {
+            foreach (IFileFormat fileFormat in _fileFormats)
+            {
+                fileFormat.Init(dialogPlaceHolder);
+            }
         }
     }
 }

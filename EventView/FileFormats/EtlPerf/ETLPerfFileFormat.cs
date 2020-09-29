@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EventView.Dialogs;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Parsers;
-using Microsoft.Diagnostics.Tracing.Stacks;
 using PerfEventView.Utils;
 using PerfEventView.Utils.Process;
 
@@ -17,23 +15,146 @@ namespace EventView.FileFormats.EtlPerf
 {
     public class ETLPerfFileFormat : IFileFormat
     {
-        private readonly IEtlPerfPartFactory _etlPerfPartFactory;
-
-        public string FormatName { get { return "ETW"; } }
-        public string[] FileExtensions { get { return new string[] { ".btl", ".etl", ".etlx", ".etl.zip", ".vspx" }; } }
-
-        public IList<IFilePart> FileParts { get; private set; }
-
-        private DateTime UtcLastWriteAtOpen
-        {
-            get;
-            set;
-        }
+        private IDialogPlaceHolder _dialogPlaceHolder;
+        private readonly IEtlPerfPartFactory _etlPerfPartFactory= new EtlPerfPartFactory();
 
         private TraceLog m_traceLog;
 
         public ETLPerfFileFormat()
         {
+        }
+
+        public string[] FileExtensions { get { return new string[] { ".btl", ".etl", ".etlx", ".etl.zip", ".vspx" }; } }
+        public IList<IFilePart> FileParts { get; private set; }
+        public string FormatName { get { return "ETW"; } }
+
+        private DateTime UtcLastWriteAtOpen { get; set; }
+
+        public List<IProcess> GetProcesses(string filePath, CommandLineArgs args, TextWriter log)
+        {
+            TraceLog eventLog = GetTraceLog(filePath, args, log);
+            return eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
+            {
+                StartTime = process.StartTime,
+                EndTime = process.EndTime,
+                CPUTimeMSec = process.CPUMSec,
+                ParentID = process.ParentID,
+                CommandLine = process.CommandLine,
+                ProcessID = process.ProcessID
+            })
+                .Cast<IProcess>()
+                .ToList();
+        }
+
+        public TraceLog GetTraceLog(string filePath, CommandLineArgs commandLineArgs, TextWriter log, Action<bool, int, int> onLostEvents = null)
+        {
+            //if (m_traceLog != null)
+            //{
+            //    if (IsUpToDate)
+            //    {
+            //        return m_traceLog;
+            //    }
+
+            //    m_traceLog.Dispose();
+            //    m_traceLog = null;
+            //}
+            var dataFileName = filePath;
+            var options = new TraceLogOptions();
+            options.ConversionLog = log;
+            if (commandLineArgs.KeepAllEvents)
+            {
+                options.KeepAllEvents = true;
+            }
+
+            var traceEventDispatcherOptions = new TraceEventDispatcherOptions();
+            traceEventDispatcherOptions.StartTime = commandLineArgs.StartTime;
+            traceEventDispatcherOptions.EndTime = commandLineArgs.EndTime;
+
+            options.MaxEventCount = commandLineArgs.MaxEventCount;
+            options.ContinueOnError = commandLineArgs.ContinueOnError;
+            options.SkipMSec = commandLineArgs.SkipMSec;
+            options.OnLostEvents = onLostEvents;
+            options.LocalSymbolsOnly = false;
+            options.ShouldResolveSymbols = delegate (string moduleFilePath)
+            { return false; };       // Don't resolve any symbols
+
+            // But if there is a directory called EtwManifests exists, look in there instead.
+            var etwManifestDirPath = Path.Combine(Path.GetDirectoryName(dataFileName), "EtwManifests");
+            if (Directory.Exists(etwManifestDirPath))
+            {
+                options.ExplicitManifestDir = etwManifestDirPath;
+            }
+
+            CommandProcessor.UnZipIfNecessary(ref dataFileName, log);
+
+            var etlxFile = dataFileName;
+            var cachedEtlxFile = false;
+            if (dataFileName.EndsWith(".etl", StringComparison.OrdinalIgnoreCase) || dataFileName.EndsWith(".btl", StringComparison.OrdinalIgnoreCase))
+            {
+                etlxFile = CacheFiles.FindFile(dataFileName, ".etlx");
+                if (!File.Exists(etlxFile))
+                {
+                    log.WriteLine("Creating ETLX file {0} from {1}", etlxFile, dataFileName);
+                    TraceLog.CreateFromEventTraceLogFile(dataFileName, etlxFile, options, traceEventDispatcherOptions);
+
+                    var dataFileSize = "Unknown";
+                    if (File.Exists(dataFileName))
+                    {
+                        dataFileSize = ((new System.IO.FileInfo(dataFileName)).Length / 1000000.0).ToString("n3") + " MB";
+                    }
+
+                    log.WriteLine("ETL Size {0} ETLX Size {1:n3} MB", dataFileSize, (new System.IO.FileInfo(etlxFile)).Length / 1000000.0);
+                }
+                else
+                {
+                    cachedEtlxFile = true;
+                    log.WriteLine("Found a corresponding ETLX file {0}", etlxFile);
+                }
+            }
+
+            try
+            {
+                m_traceLog = new TraceLog(etlxFile);
+
+                // Add some more parser that we would like.
+                new Microsoft.Diagnostics.Tracing.Parsers.ETWClrProfilerTraceEventParser(m_traceLog);
+                new MicrosoftWindowsNDISPacketCaptureTraceEventParser(m_traceLog);
+            }
+            catch (Exception)
+            {
+                if (cachedEtlxFile)
+                {
+                    // Delete the file and try again.
+                    object p = EventView.Utils.FileUtilities.ForceDelete(etlxFile);
+                    if (!File.Exists(etlxFile))
+                    {
+                        return GetTraceLog(filePath, commandLineArgs, log, onLostEvents);
+                    }
+                }
+                throw;
+            }
+
+            UtcLastWriteAtOpen = File.GetLastWriteTimeUtc(filePath);
+            if (commandLineArgs.UnsafePDBMatch)
+            {
+                m_traceLog.CodeAddresses.UnsafePDBMatching = true;
+            }
+
+            if (m_traceLog.Truncated)   // Warn about truncation.
+            {
+                throw new Exception("The ETL file was too big to convert and was truncated.\r\nSee log for details");
+                //GuiApp.MainWindow.Dispatcher.BeginInvoke((Action)delegate ()
+                //{
+                //    MessageBox.Show("The ETL file was too big to convert and was truncated.\r\nSee log for details", "Log File Truncated", MessageBoxButton.OK);
+                //});
+            }
+            return m_traceLog;
+        }
+
+        public void Init(IDialogPlaceHolder dialogPlaceHolder)
+        {
+            _dialogPlaceHolder = dialogPlaceHolder;
+            _etlPerfPartFactory.Init(dialogPlaceHolder);
         }
 
         public async Task ParseAsync(string fileName)
@@ -42,16 +163,14 @@ namespace EventView.FileFormats.EtlPerf
             TextWriter logWriter = new StringWriter(stringBuilder);
             CommandLineArgs args = new CommandLineArgs();
 
-            
-
-            var tracelog = await Task.Run(()=>GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
-            {
-                //if (!m_notifiedAboutLostEvents)
-                //{
-                //    HandleLostEvents(parentWindow, truncated, numberOfLostEvents, eventCountAtTrucation, worker);
-                //    m_notifiedAboutLostEvents = true;
-                //}
-            }));
+            var tracelog = await Task.Run(() => GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
+              {
+                  //if (!m_notifiedAboutLostEvents)
+                  //{
+                  //    HandleLostEvents(parentWindow, truncated, numberOfLostEvents, eventCountAtTrucation, worker);
+                  //    m_notifiedAboutLostEvents = true;
+                  //}
+              }));
 
             // Warn about possible Win8 incompatibility.
             //var logVer = tracelog.OSVersion.Major * 10 + tracelog.OSVersion.Minor;
@@ -335,127 +454,6 @@ namespace EventView.FileFormats.EtlPerf
             ////}
 
             ////return Task.CompletedTask;
-        }
-
-        public TraceLog GetTraceLog(string filePath, CommandLineArgs commandLineArgs, TextWriter log, Action<bool, int, int> onLostEvents = null)
-        {
-            //if (m_traceLog != null)
-            //{
-            //    if (IsUpToDate)
-            //    {
-            //        return m_traceLog;
-            //    }
-
-            //    m_traceLog.Dispose();
-            //    m_traceLog = null;
-            //}
-            var dataFileName = filePath;
-            var options = new TraceLogOptions();
-            options.ConversionLog = log;
-            if (commandLineArgs.KeepAllEvents)
-            {
-                options.KeepAllEvents = true;
-            }
-
-            var traceEventDispatcherOptions = new TraceEventDispatcherOptions();
-            traceEventDispatcherOptions.StartTime = commandLineArgs.StartTime;
-            traceEventDispatcherOptions.EndTime = commandLineArgs.EndTime;
-
-            options.MaxEventCount = commandLineArgs.MaxEventCount;
-            options.ContinueOnError = commandLineArgs.ContinueOnError;
-            options.SkipMSec = commandLineArgs.SkipMSec;
-            options.OnLostEvents = onLostEvents;
-            options.LocalSymbolsOnly = false;
-            options.ShouldResolveSymbols = delegate (string moduleFilePath)
-            { return false; };       // Don't resolve any symbols
-
-            // But if there is a directory called EtwManifests exists, look in there instead.
-            var etwManifestDirPath = Path.Combine(Path.GetDirectoryName(dataFileName), "EtwManifests");
-            if (Directory.Exists(etwManifestDirPath))
-            {
-                options.ExplicitManifestDir = etwManifestDirPath;
-            }
-
-            CommandProcessor.UnZipIfNecessary(ref dataFileName, log);
-
-            var etlxFile = dataFileName;
-            var cachedEtlxFile = false;
-            if (dataFileName.EndsWith(".etl", StringComparison.OrdinalIgnoreCase) || dataFileName.EndsWith(".btl", StringComparison.OrdinalIgnoreCase))
-            {
-                etlxFile = CacheFiles.FindFile(dataFileName, ".etlx");
-                if (!File.Exists(etlxFile))
-                {
-                    log.WriteLine("Creating ETLX file {0} from {1}", etlxFile, dataFileName);
-                    TraceLog.CreateFromEventTraceLogFile(dataFileName, etlxFile, options, traceEventDispatcherOptions);
-
-                    var dataFileSize = "Unknown";
-                    if (File.Exists(dataFileName))
-                    {
-                        dataFileSize = ((new System.IO.FileInfo(dataFileName)).Length / 1000000.0).ToString("n3") + " MB";
-                    }
-
-                    log.WriteLine("ETL Size {0} ETLX Size {1:n3} MB", dataFileSize, (new System.IO.FileInfo(etlxFile)).Length / 1000000.0);
-                }
-                else
-                {
-                    cachedEtlxFile = true;
-                    log.WriteLine("Found a corresponding ETLX file {0}", etlxFile);
-                }
-            }
-
-            try
-            {
-                m_traceLog = new TraceLog(etlxFile);
-
-                // Add some more parser that we would like.
-                new Microsoft.Diagnostics.Tracing.Parsers.ETWClrProfilerTraceEventParser(m_traceLog);
-                new MicrosoftWindowsNDISPacketCaptureTraceEventParser(m_traceLog);
-            }
-            catch (Exception)
-            {
-                if (cachedEtlxFile)
-                {
-                    // Delete the file and try again.
-                    object p = EventView.Utils.FileUtilities.ForceDelete(etlxFile);
-                    if (!File.Exists(etlxFile))
-                    {
-                        return GetTraceLog(filePath, commandLineArgs, log, onLostEvents);
-                    }
-                }
-                throw;
-            }
-
-            UtcLastWriteAtOpen = File.GetLastWriteTimeUtc(filePath);
-            if (commandLineArgs.UnsafePDBMatch)
-            {
-                m_traceLog.CodeAddresses.UnsafePDBMatching = true;
-            }
-
-            if (m_traceLog.Truncated)   // Warn about truncation.
-            {
-                throw new Exception("The ETL file was too big to convert and was truncated.\r\nSee log for details");
-                //GuiApp.MainWindow.Dispatcher.BeginInvoke((Action)delegate ()
-                //{
-                //    MessageBox.Show("The ETL file was too big to convert and was truncated.\r\nSee log for details", "Log File Truncated", MessageBoxButton.OK);
-                //});
-            }
-            return m_traceLog;
-        }
-
-        public List<IProcess> GetProcesses(string filePath, CommandLineArgs args, TextWriter log)
-        {
-            TraceLog eventLog = GetTraceLog(filePath, args, log);
-            return eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
-                {
-                    StartTime = process.StartTime,
-                    EndTime = process.EndTime,
-                    CPUTimeMSec = process.CPUMSec,
-                    ParentID = process.ParentID,
-                    CommandLine = process.CommandLine,
-                    ProcessID = process.ProcessID
-                })
-                .Cast<IProcess>()
-                .ToList();
         }
     }
 }
