@@ -6,6 +6,5 @@ namespace EventView.FileFormats
     public interface IFileFormatFactory
     {
         IFileFormat Get(string fileName);
-        void Init(IDialogPlaceHolder dialogPlaceHolder);
     }
 }

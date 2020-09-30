@@ -10,7 +10,5 @@ namespace EventView.FileFormats
         string FormatName { get; }
         string[] FileExtensions { get; }
         IList<IFilePart> FileParts { get; }
-
-        void Init(IDialogPlaceHolder dialogPlaceHolder);
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IDialog
     {
-        
+        string Title { get; }
     }
 }

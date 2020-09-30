@@ -15,8 +15,7 @@ namespace EventView.FileFormats.EtlPerf
 {
     public class ETLPerfFileFormat : IFileFormat
     {
-        private IDialogPlaceHolder _dialogPlaceHolder;
-        private readonly IEtlPerfPartFactory _etlPerfPartFactory= new EtlPerfPartFactory();
+        private readonly EtlPerfPartFactory _etlPerfPartFactory = new EtlPerfPartFactory();
 
         private TraceLog m_traceLog;
 
@@ -149,12 +148,6 @@ namespace EventView.FileFormats.EtlPerf
                 //});
             }
             return m_traceLog;
-        }
-
-        public void Init(IDialogPlaceHolder dialogPlaceHolder)
-        {
-            _dialogPlaceHolder = dialogPlaceHolder;
-            _etlPerfPartFactory.Init(dialogPlaceHolder);
         }
 
         public async Task ParseAsync(string fileName)

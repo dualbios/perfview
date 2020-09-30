@@ -5,14 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="http://schemas.kent.boogaart.com/converters"
         xmlns:localConverters="clr-namespace:EventView.Converters"
+        xmlns:viewmodels="clr-namespace:EventView.ViewModels"
+        xmlns:viewms="clr-namespace:EventView.Views"
         xmlns:local="clr-namespace:EventView"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
+
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="ReversedVisibilityConverter" IsReversed="True"></converters:BooleanToVisibilityConverter>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></BooleanToVisibilityConverter>
             <localConverters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"></localConverters:NullToVisibilityConverter>
+
+            <DataTemplate DataType="{x:Type viewmodels:ProcessListDialogViewModel}">
+                <viewms:ProcessListDialogControl></viewms:ProcessListDialogControl>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -46,11 +53,11 @@
                         <Button Content="Run"></Button>
                     </StackPanel>
                     <!--<TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>-->
-                    <ListBox ItemsSource="{Binding FileParts}" >
+                    <ListBox ItemsSource="{Binding FileParts}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="10">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
                                     <Button Content="Open" Command="{Binding DataContext.OpenPartCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"></Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -68,22 +75,36 @@
                 </StackPanel>
             </Grid>
         </Grid>
-        <DockPanel LastChildFill="True" Margin="4" Visibility="{Binding DialogContainer, Converter={StaticResource NullToVisibilityConverter}}">
-            <TextBlock Text="Dialog" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#7F1D1D1D"></TextBlock>
-            <Grid DockPanel.Dock="Bottom" Background="#7F1D1D1D">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <StackPanel.Resources>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Margin" Value="4"></Setter>
-                            <Setter Property="Width" Value="60"></Setter>
-                            <Setter Property="Height" Value="30"></Setter>
-                        </Style>
-                    </StackPanel.Resources>
-                    <Button Content="Cancel" Command="{Binding CancelCommand}"></Button>
-                    <Button Content="Ok" Command="{Binding OkCommand}"></Button>
-                </StackPanel>
-            </Grid>
-            <ContentControl Content="{Binding DialogContainer}"></ContentControl>
-        </DockPanel>
+        <Grid Margin="4"
+              Visibility="{Binding DialogContainer, Converter={StaticResource NullToVisibilityConverter}}"
+              Background="#7F1D1D1D">
+            <Border BorderBrush="Black" BorderThickness="1" Margin="16" VerticalAlignment="Top">
+                <DockPanel LastChildFill="True">
+                    <Border DockPanel.Dock="Top" Background="#7F1D1D1D" BorderThickness="1" BorderBrush="Black">
+                        <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" ></TextBlock>
+                    </Border>
+                    <Border DockPanel.Dock="Bottom" 
+                            Background="#7F1D1D1D" 
+                            BorderThickness="1" 
+                            BorderBrush="Black"
+                            >
+                        <Grid Margin="4">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <StackPanel.Resources>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Margin" Value="4"></Setter>
+                                        <Setter Property="Width" Value="60"></Setter>
+                                        <Setter Property="Height" Value="30"></Setter>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Button Content="Cancel" Command="{Binding CancelCommand}"></Button>
+                                <Button Content="Ok" Command="{Binding OkCommand}"></Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ContentControl Content="{Binding DialogContainer}"></ContentControl>
+                </DockPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

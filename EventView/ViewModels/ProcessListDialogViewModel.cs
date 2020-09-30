@@ -20,5 +20,7 @@ namespace EventView.ViewModels
         {
             return new IProcess[] { SelectedProcess };
         }
+
+        public string Title { get; } = "Process select dialog";
     }
 }

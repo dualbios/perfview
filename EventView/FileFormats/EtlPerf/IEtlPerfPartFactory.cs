@@ -11,7 +11,5 @@ namespace EventView.FileFormats.EtlPerf
         IEnumerable<IEtlFilePart> GetParts(EtlPerfFileStats stats);
 
         IEnumerable<IEtlFilePart> GetSupportedPart();
-
-        void Init(IDialogPlaceHolder dialogPlaceHolder);
     }
 }

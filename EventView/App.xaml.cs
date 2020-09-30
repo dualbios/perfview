@@ -20,26 +20,14 @@ namespace EventView
 
             services.AddSingleton<IFileFormat, FileFormats.EtlPerf.ETLPerfFileFormat>();
             services.AddSingleton<IFileFormatFactory, FileFormatFactory>();
-            //services.AddSingleton<MainWindowViewModel, MainWindowViewModel>();
-            services.AddSingleton<IDialogPlaceHolder, MainWindowViewModel>(x=> GetMainWindowViewModel(x.GetService<IFileFormatFactory>()));
-
             serviceProvider = services.BuildServiceProvider();
 
             IFileFormatFactory fileFormatFactory = serviceProvider.GetRequiredService<IFileFormatFactory>();
-            var dataContext = GetMainWindowViewModel(fileFormatFactory);
+            var dataContext = new MainWindowViewModel(fileFormatFactory);
+
             var view = new MainWindow() { DataContext = dataContext };
             view.Show();
         }
 
-        private MainWindowViewModel mainWindowViewModel = null;
-        private MainWindowViewModel GetMainWindowViewModel(IFileFormatFactory fileFormatFactory)
-        {
-            if (mainWindowViewModel == null)
-            {
-                mainWindowViewModel = new MainWindowViewModel(fileFormatFactory);
-            }
-
-            return mainWindowViewModel;
-        }
     }
 }

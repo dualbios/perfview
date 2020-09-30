@@ -8,27 +8,27 @@ namespace EventView.FileFormats.EtlPerf.Parts
 {
     public class GCHeapAllocIgnoreFreeCoarseSampling : EtlStackSourceFilePart
     {
-        private readonly IDialogPlaceHolder _dialogPlaceHolder;
-
-        public GCHeapAllocIgnoreFreeCoarseSampling(IDialogPlaceHolder dialogPlaceHolder) : base("Memory Group", "GC Heap Alloc Ignore Free (Coarse Sampling)")
+        public GCHeapAllocIgnoreFreeCoarseSampling() : base("Memory Group", "GC Heap Alloc Ignore Free (Coarse Sampling)")
         {
-            _dialogPlaceHolder = dialogPlaceHolder;
         }
 
         public override bool IsExist(EtlPerfFileStats stats)
         {
+            // FOR TEST
             //return stats.HasGCAllocationTicks;
             return true;
         }
 
-        public override async Task Open()
+        public override Task Open(IDialogPlaceHolder dialogPlaceHolder)
         {
             ProcessListDialogViewModel dialog = base.GetProcessDialog();
-            _dialogPlaceHolder.Show(dialog, d =>
+            dialogPlaceHolder.Show(dialog, d =>
                 {
                     IEnumerable<IProcess> processes = dialog.GetSelectedProcesses();
                 }
             );
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -9,9 +9,6 @@ namespace EventView.FileFormats.EtlPerf
 {
     public class EtlPerfPartFactory : IEtlPerfPartFactory
     {
-        private IDialogPlaceHolder _dialogPlaceHolder;
-
-       
         public EtlPerfFileStats CreateStats(TraceEventStats stats)
         {
             EtlPerfFileStats fileStats = new EtlPerfFileStats
@@ -101,7 +98,7 @@ namespace EventView.FileFormats.EtlPerf
 
             yield return new GCHeapNetMemCoarseSampling();
             yield return new Gen2ObjectDeathsCoarseSampling();
-            yield return new GCHeapAllocIgnoreFreeCoarseSampling(_dialogPlaceHolder);
+            yield return new GCHeapAllocIgnoreFreeCoarseSampling();
 
             yield return new GCHeapNetMem();
             yield return new GCHeapAllocIgnoreFree();
@@ -114,11 +111,6 @@ namespace EventView.FileFormats.EtlPerf
 
             yield return new PerfViewEventStats();
             yield return new PerfViewEventSource();
-        }
-
-        public void Init(IDialogPlaceHolder dialogPlaceHolder)
-        {
-            _dialogPlaceHolder = dialogPlaceHolder;
         }
     }
 }

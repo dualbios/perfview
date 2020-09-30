@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using EventView.Dialogs;
 using Microsoft.Diagnostics.Tracing.Etlx;
 
 namespace EventView.FileFormats.EtlPerf
@@ -13,7 +14,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public string Group { get; }
 
-        public Task Open()
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
         {
             throw new System.NotImplementedException();
         }

@@ -28,7 +28,6 @@ namespace EventView.ViewModels
         public MainWindowViewModel(IFileFormatFactory fileFormatFactory)
         {
             _fileFormatFactory = fileFormatFactory;
-            _fileFormatFactory.Init(this);
         }
 
         public ICommand CancelCommand
@@ -156,7 +155,7 @@ namespace EventView.ViewModels
             IFilePart filePart = (o as IFilePart);
             if (filePart != null)
             {
-                await filePart.Open();
+                await filePart.Open(this);
             }
         }
     }

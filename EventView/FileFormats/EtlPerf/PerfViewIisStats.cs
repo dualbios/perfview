@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using EventView.Dialogs;
 
 namespace EventView.FileFormats.EtlPerf
 {
@@ -13,7 +14,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public string Group { get; } = "Advanced Group";
 
-        public Task Open()
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
         {
             throw new System.NotImplementedException();
         }

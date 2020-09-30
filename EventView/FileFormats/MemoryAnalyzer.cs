@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using EventView.Dialogs;
 using EventView.FileFormats.EtlPerf;
 
 namespace EventView.FileFormats
@@ -10,7 +11,7 @@ namespace EventView.FileFormats
         }
 
         public string Group { get; } = "Memory Group";
-        public Task Open()
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
         {
             throw new System.NotImplementedException();
         }
