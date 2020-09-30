@@ -9,7 +9,7 @@
         xmlns:viewms="clr-namespace:EventView.Views"
         xmlns:local="clr-namespace:EventView"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="568">
     <Window.Resources>
 
         <ResourceDictionary>
@@ -21,12 +21,16 @@
             <DataTemplate DataType="{x:Type viewmodels:ProcessListDialogViewModel}">
                 <viewms:ProcessListDialogControl></viewms:ProcessListDialogControl>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:SimpleDataViewer}">
+                <viewms:SimpleDataView></viewms:SimpleDataView>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid>
             <Grid>
-                <Grid Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
+                <Grid  d:IsHidden="true"
+                       Visibility="{Binding IsFileOpened, Converter={StaticResource ReversedVisibilityConverter}}">
                     <Grid>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <StackPanel.Resources>
@@ -42,7 +46,10 @@
                     </Grid>
                 </Grid>
                 <DockPanel LastChildFill="True" Visibility="{Binding IsFileOpened, Converter={StaticResource BooleanToVisibilityConverter} }">
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
+                    <StackPanel DockPanel.Dock="Top"
+                                Orientation="Horizontal"
+                                Margin="4"
+                                d:IsHidden="true">
                         <StackPanel.Resources>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Margin" Value="4"></Setter>
@@ -53,7 +60,6 @@
                         <Button Content="Collect"></Button>
                         <Button Content="Run"></Button>
                     </StackPanel>
-                    <!--<TreeView DockPanel.Dock="Left" ItemsSource="{Binding FileItems}"></TreeView>-->
                     <ListBox ItemsSource="{Binding FileParts}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -64,11 +70,28 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ContentControl Content="{Binding MainObject}"></ContentControl>
+                    <TabControl ItemsSource="{Binding TabItems}">
+                        <!--<TabControl.Resources>
+                            <Style TargetType="TabItem">
+                                <Setter Property="Template" Value="{DynamicResource TabItemControlTemplate1}"/>
+                            </Style>
+                        </TabControl.Resources>-->
+                        <TabControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </TabControl.ItemTemplate>
+                        <!--<TabControl.ContentTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding}" />
+                            </DataTemplate>
+                        </TabControl.ContentTemplate>-->
+                    </TabControl>
                 </DockPanel>
             </Grid>
 
             <Grid Background="DimGray"
+                  d:IsHidden="true"
             Visibility="{Binding IsFileOpening, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200 0">
                     <ProgressBar IsIndeterminate="True"  Height="16" VerticalAlignment="Center" ></ProgressBar>
@@ -76,12 +99,12 @@
                 </StackPanel>
             </Grid>
         </Grid>
-        <Grid Margin="4"
+        <Grid Margin="4"  d:IsHidden="true"
               Visibility="{Binding DialogContainer, Converter={StaticResource NullToVisibilityConverter}}"
               Background="#7F1D1D1D">
             <Border BorderBrush="Black" BorderThickness="1" Margin="16" VerticalAlignment="Top">
                 <Grid>
-                    <DockPanel LastChildFill="True" 
+                    <DockPanel LastChildFill="True"
                                IsEnabled="{Binding DataContext.IsLoading, Converter={StaticResource InvertBoolConverter}, RelativeSource={RelativeSource AncestorType=Window}}">
                         <Border DockPanel.Dock="Top" Background="#7F1D1D1D" BorderThickness="1" BorderBrush="Black">
                             <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" ></TextBlock>
@@ -106,10 +129,10 @@
                         </Border>
                         <ContentControl Content="{Binding DialogContainer}"></ContentControl>
                     </DockPanel>
-                    <ProgressBar VerticalAlignment="Center" 
-                                 Margin="100 0" 
-                                 Height="12" 
-                                 IsIndeterminate="True" 
+                    <ProgressBar VerticalAlignment="Center"
+                                 Margin="100 0"
+                                 Height="12"
+                                 IsIndeterminate="True"
                                  Visibility="{Binding DataContext.IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=Window}}"></ProgressBar>
                 </Grid>
             </Border>

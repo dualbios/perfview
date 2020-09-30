@@ -30,7 +30,7 @@ namespace EventView.FileFormats.EtlPerf
             return true;
         }
 
-        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder)
         {
             throw new System.NotImplementedException();
         }

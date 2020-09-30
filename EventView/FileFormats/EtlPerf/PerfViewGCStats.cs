@@ -14,7 +14,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public string Group { get; } = "Memory Group";
 
-        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder)
         {
             throw new System.NotImplementedException();
         }

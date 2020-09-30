@@ -6,7 +6,7 @@ namespace EventView.FileFormats
     public interface IFilePart
     {
         string Group { get; }
-        Task Open(IDialogPlaceHolder dialogPlaceHolder);
+        Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder);
         string Name { get; }
     }
 }

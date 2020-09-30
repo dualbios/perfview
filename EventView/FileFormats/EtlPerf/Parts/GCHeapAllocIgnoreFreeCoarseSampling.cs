@@ -19,14 +19,24 @@ namespace EventView.FileFormats.EtlPerf.Parts
             return true;
         }
 
-        public override async Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public override async Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder)
         {
             ProcessListDialogViewModel dialog = base.GetProcessDialog();
-            await dialogPlaceHolder.Show(dialog, d =>
+            await dialogPlaceHolder.Show(dialog, async d =>
                 {
                     IEnumerable<IProcess> processes = dialog.GetSelectedProcesses();
+                    IDataViewer dataViewer = CreateDataViewer();
+
+                    tabHolder.Add(dataViewer);
+
+                    await dataViewer.Initialize();
                 }
             );
+        }
+
+        private IDataViewer CreateDataViewer()
+        {
+            return new SimpleDataViewer();
         }
     }
 }

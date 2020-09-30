@@ -82,8 +82,10 @@
     </ApplicationDefinition>
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Dialogs\IDataViewer.cs" />
     <Compile Include="Dialogs\IDialog.cs" />
     <Compile Include="Dialogs\IDialogPlaceHolder.cs" />
+    <Compile Include="Dialogs\ITabHolder.cs" />
     <Compile Include="FileFormats\EtlPerf\EtlPerfFileStats.cs" />
     <Compile Include="FileFormats\EtlPerf\EtlStackSourceFilePart.cs" />
     <Compile Include="FileFormats\EtlPerf\Parts\DiskIOFilePart.cs" />
@@ -145,9 +147,13 @@
     <Compile Include="Utils\Triggers.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ProcessListDialogViewModel.cs" />
+    <Compile Include="ViewModels\SimpleDataViewer.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\ProcessListDialogControl.xaml.cs">
       <DependentUpon>ProcessListDialogControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SimpleDataView.xaml.cs">
+      <DependentUpon>SimpleDataView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +168,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ProcessListDialogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SimpleDataView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

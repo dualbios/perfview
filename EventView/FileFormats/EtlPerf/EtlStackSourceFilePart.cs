@@ -38,7 +38,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public abstract bool IsExist(EtlPerfFileStats stats);
 
-        public virtual Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public virtual Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder)
         {
             return Task.CompletedTask;
         }

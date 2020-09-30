@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using EventView.Dialogs;
 using EventView.FileFormats;
 using Microsoft.Win32;
 
 namespace EventView.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IDialogPlaceHolder
+    public class MainWindowViewModel : ViewModelBase, IDialogPlaceHolder, ITabHolder
     {
         private readonly IFileFormatFactory _fileFormatFactory;
+        private readonly ObservableCollection<IDataViewer> _tabItems = new ObservableCollection<IDataViewer>();
         private ICommand _cancelCommand;
         private IDialog _currentDialog = null;
         private IDialog _dialogContainer;
@@ -87,7 +90,7 @@ namespace EventView.ViewModels
             {
                 if (_okCommand == null)
                 {
-                    _okCommand = new RelayCommand(o => OkAction(), o => DialogContainer != null);
+                    _okCommand = new RelayCommand(async o => await OkAction(), o => DialogContainer != null);
                 }
                 return _okCommand;
             }
@@ -106,6 +109,13 @@ namespace EventView.ViewModels
 
                 return _openPartCommand;
             }
+        }
+
+        public IEnumerable<IDataViewer> TabItems => _tabItems;
+
+        public void Add(IDataViewer dataViewer)
+        {
+            Application.Current.Dispatcher.Invoke(() => _tabItems.Add(dataViewer));
         }
 
         public async Task Show(IDialog dialog, Action<IDialog> okAction)
@@ -131,9 +141,9 @@ namespace EventView.ViewModels
             DialogContainer = null;
         }
 
-        private void OkAction()
+        private async Task OkAction()
         {
-            _okAction(_currentDialog);
+            await Task.Run(() => _okAction(_currentDialog));
             _currentDialog = null;
             DialogContainer = null;
         }
@@ -174,7 +184,7 @@ namespace EventView.ViewModels
             IFilePart filePart = (o as IFilePart);
             if (filePart != null)
             {
-                await filePart.Open(this);
+                await filePart.Open(this, this);
             }
         }
     }

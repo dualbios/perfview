@@ -14,7 +14,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public string Group { get; }
 
-        public Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public Task Open(IDialogPlaceHolder dialogPlaceHolder, ITabHolder tabHolder)
         {
             throw new System.NotImplementedException();
         }

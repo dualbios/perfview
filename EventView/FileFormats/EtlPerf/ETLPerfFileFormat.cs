@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EventView.Dialogs;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Parsers;
@@ -29,20 +28,27 @@ namespace EventView.FileFormats.EtlPerf
 
         private DateTime UtcLastWriteAtOpen { get; set; }
 
-        public List<IProcess> GetProcesses(string filePath, CommandLineArgs args, TextWriter log)
+        public async Task<List<IProcess>> GetProcesses()
         {
-            TraceLog eventLog = GetTraceLog(filePath, args, log);
-            return eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
+            var eventLog = m_traceLog;
+            List<IProcess> processes = new List<IProcess>();
+            await Task.Run(() =>
             {
-                StartTime = process.StartTime,
-                EndTime = process.EndTime,
-                CPUTimeMSec = process.CPUMSec,
-                ParentID = process.ParentID,
-                CommandLine = process.CommandLine,
-                ProcessID = process.ProcessID
-            })
-                .Cast<IProcess>()
-                .ToList();
+                processes = eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
+                {
+                    StartTime = process.StartTime,
+                    EndTime = process.EndTime,
+                    CPUTimeMSec = process.CPUMSec,
+                    ParentID = process.ParentID,
+                    CommandLine = process.CommandLine,
+                    ProcessID = process.ProcessID
+                })
+                    .Cast<IProcess>()
+                    .ToList();
+                processes.Sort();
+            });
+
+            return processes;
         }
 
         public TraceLog GetTraceLog(string filePath, CommandLineArgs commandLineArgs, TextWriter log, Action<bool, int, int> onLostEvents = null)
@@ -447,30 +453,6 @@ namespace EventView.FileFormats.EtlPerf
             ////}
 
             ////return Task.CompletedTask;
-        }
-
-        public async Task<List<IProcess>> GetProcesses()
-        {
-            var eventLog = m_traceLog;
-            List<IProcess> processes = new List<IProcess>();
-            await Task.Run(async () =>
-            {
-                processes = eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
-                    {
-                        StartTime = process.StartTime,
-                        EndTime = process.EndTime,
-                        CPUTimeMSec = process.CPUMSec,
-                        ParentID = process.ParentID,
-                        CommandLine = process.CommandLine,
-                        ProcessID = process.ProcessID
-                    })
-                    .Cast<IProcess>()
-                    .ToList();
-                await Task.Delay(1500);
-                processes.Sort();
-            });
-
-            return processes;
         }
     }
 }
