@@ -156,7 +156,7 @@ namespace EventView.FileFormats.EtlPerf
             TextWriter logWriter = new StringWriter(stringBuilder);
             CommandLineArgs args = new CommandLineArgs();
 
-            var tracelog = await Task.Run(() => GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
+            m_traceLog = await Task.Run(() => GetTraceLog(fileName, args, logWriter, delegate (bool truncated, int numberOfLostEvents, int eventCountAtTrucation)
               {
                   //if (!m_notifiedAboutLostEvents)
                   //{
@@ -194,7 +194,7 @@ namespace EventView.FileFormats.EtlPerf
             //var experimental = new PerfViewTreeGroup("Experimental Group");
             FileParts = new List<IFilePart>();
 
-            EtlPerfFileStats fileStats = _etlPerfPartFactory.CreateStats(tracelog.Stats);
+            EtlPerfFileStats fileStats = _etlPerfPartFactory.CreateStats(m_traceLog.Stats);
 
             //m_Children.Add(new PerfViewTraceInfo(this));
             //m_Children.Add(new PerfViewProcesses(this));
@@ -202,7 +202,7 @@ namespace EventView.FileFormats.EtlPerf
             FileParts.Clear();
             foreach (IEtlFilePart etlFilePart in _etlPerfPartFactory.GetParts(fileStats))
             {
-                await etlFilePart.Init(this, tracelog);
+                await etlFilePart.Init(this, m_traceLog);
                 FileParts.Add(etlFilePart);
             }
 
@@ -447,6 +447,30 @@ namespace EventView.FileFormats.EtlPerf
             ////}
 
             ////return Task.CompletedTask;
+        }
+
+        public async Task<List<IProcess>> GetProcesses()
+        {
+            var eventLog = m_traceLog;
+            List<IProcess> processes = new List<IProcess>();
+            await Task.Run(async () =>
+            {
+                processes = eventLog.Processes.Select(process => new ProcessForStackSource(process.Name)
+                    {
+                        StartTime = process.StartTime,
+                        EndTime = process.EndTime,
+                        CPUTimeMSec = process.CPUMSec,
+                        ParentID = process.ParentID,
+                        CommandLine = process.CommandLine,
+                        ProcessID = process.ProcessID
+                    })
+                    .Cast<IProcess>()
+                    .ToList();
+                await Task.Delay(1500);
+                processes.Sort();
+            });
+
+            return processes;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace EventView.FileFormats.EtlPerf
 
         public ProcessListDialogViewModel GetProcessDialog()
         {
-            return new ProcessListDialogViewModel();
+            return new ProcessListDialogViewModel(FileFormat);
         }
     }
 }

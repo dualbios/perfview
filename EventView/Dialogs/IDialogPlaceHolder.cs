@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace EventView.Dialogs
 {
     public interface IDialogPlaceHolder
     {
         IDialog DialogContainer { get; set; }
-        void Show(IDialog dialog, Action<IDialog> okAction);
+        Task Show(IDialog dialog, Action<IDialog> okAction);
     }
 }

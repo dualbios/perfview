@@ -19,16 +19,14 @@ namespace EventView.FileFormats.EtlPerf.Parts
             return true;
         }
 
-        public override Task Open(IDialogPlaceHolder dialogPlaceHolder)
+        public override async Task Open(IDialogPlaceHolder dialogPlaceHolder)
         {
             ProcessListDialogViewModel dialog = base.GetProcessDialog();
-            dialogPlaceHolder.Show(dialog, d =>
+            await dialogPlaceHolder.Show(dialog, d =>
                 {
                     IEnumerable<IProcess> processes = dialog.GetSelectedProcesses();
                 }
             );
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -19,8 +19,11 @@ namespace EventView.ViewModels
         private string _filePath;
         private bool _isFileOpened;
         private bool _isFileOpening;
+        private bool _isLoading;
         private Action<IDialog> _okAction = null;
+
         private RelayCommand _okCommand = null;
+
         private RelayCommand _openCommand;
 
         private ICommand _openPartCommand = null;
@@ -72,6 +75,12 @@ namespace EventView.ViewModels
             set => SetProperty(ref _isFileOpening, value);
         }
 
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
         public ICommand OkCommand
         {
             get
@@ -99,11 +108,21 @@ namespace EventView.ViewModels
             }
         }
 
-        public void Show(IDialog dialog, Action<IDialog> okAction)
+        public async Task Show(IDialog dialog, Action<IDialog> okAction)
         {
             DialogContainer = dialog;
             _currentDialog = dialog;
             _okAction = okAction;
+
+            try
+            {
+                IsLoading = true;
+                await dialog.Initialize();
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private void CancelAction()

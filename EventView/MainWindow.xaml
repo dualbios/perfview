@@ -16,6 +16,7 @@
             <converters:BooleanToVisibilityConverter x:Key="ReversedVisibilityConverter" IsReversed="True"></converters:BooleanToVisibilityConverter>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></BooleanToVisibilityConverter>
             <localConverters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"></localConverters:NullToVisibilityConverter>
+            <localConverters:InvertBoolConverter x:Key="InvertBoolConverter"></localConverters:InvertBoolConverter>
 
             <DataTemplate DataType="{x:Type viewmodels:ProcessListDialogViewModel}">
                 <viewms:ProcessListDialogControl></viewms:ProcessListDialogControl>
@@ -79,31 +80,38 @@
               Visibility="{Binding DialogContainer, Converter={StaticResource NullToVisibilityConverter}}"
               Background="#7F1D1D1D">
             <Border BorderBrush="Black" BorderThickness="1" Margin="16" VerticalAlignment="Top">
-                <DockPanel LastChildFill="True">
-                    <Border DockPanel.Dock="Top" Background="#7F1D1D1D" BorderThickness="1" BorderBrush="Black">
-                        <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" ></TextBlock>
-                    </Border>
-                    <Border DockPanel.Dock="Bottom" 
-                            Background="#7F1D1D1D" 
-                            BorderThickness="1" 
-                            BorderBrush="Black"
-                            >
-                        <Grid Margin="4">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <StackPanel.Resources>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Margin" Value="4"></Setter>
-                                        <Setter Property="Width" Value="60"></Setter>
-                                        <Setter Property="Height" Value="30"></Setter>
-                                    </Style>
-                                </StackPanel.Resources>
-                                <Button Content="Cancel" Command="{Binding CancelCommand}"></Button>
-                                <Button Content="Ok" Command="{Binding OkCommand}"></Button>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    <ContentControl Content="{Binding DialogContainer}"></ContentControl>
-                </DockPanel>
+                <Grid>
+                    <DockPanel LastChildFill="True" 
+                               IsEnabled="{Binding DataContext.IsLoading, Converter={StaticResource InvertBoolConverter}, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <Border DockPanel.Dock="Top" Background="#7F1D1D1D" BorderThickness="1" BorderBrush="Black">
+                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" ></TextBlock>
+                        </Border>
+                        <Border DockPanel.Dock="Bottom"
+                            Background="#7F1D1D1D"
+                            BorderThickness="1"
+                            BorderBrush="Black">
+                            <Grid Margin="4">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Margin" Value="4"></Setter>
+                                            <Setter Property="Width" Value="60"></Setter>
+                                            <Setter Property="Height" Value="30"></Setter>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <Button Content="Cancel" Command="{Binding CancelCommand}"></Button>
+                                    <Button Content="Ok" Command="{Binding OkCommand}"></Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ContentControl Content="{Binding DialogContainer}"></ContentControl>
+                    </DockPanel>
+                    <ProgressBar VerticalAlignment="Center" 
+                                 Margin="100 0" 
+                                 Height="12" 
+                                 IsIndeterminate="True" 
+                                 Visibility="{Binding DataContext.IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=Window}}"></ProgressBar>
+                </Grid>
             </Border>
         </Grid>
     </Grid>
